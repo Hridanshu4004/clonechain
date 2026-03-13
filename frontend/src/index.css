@@ -1,0 +1,107 @@
+@import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700;800&family=Inter:wght@300;400;500;600;700&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --background: 220 20% 4%;
+    --foreground: 180 10% 92%;
+
+    --card: 220 18% 7%;
+    --card-foreground: 180 10% 92%;
+
+    --popover: 220 18% 7%;
+    --popover-foreground: 180 10% 92%;
+
+    --primary: 174 72% 52%;
+    --primary-foreground: 220 20% 4%;
+
+    --secondary: 220 16% 12%;
+    --secondary-foreground: 180 10% 80%;
+
+    --muted: 220 14% 10%;
+    --muted-foreground: 220 10% 50%;
+
+    --accent: 265 70% 60%;
+    --accent-foreground: 0 0% 100%;
+
+    --destructive: 0 72% 55%;
+    --destructive-foreground: 0 0% 100%;
+
+    --border: 220 16% 14%;
+    --input: 220 16% 14%;
+    --ring: 174 72% 52%;
+
+    --radius: 0.5rem;
+
+    --glow-primary: 174 72% 52%;
+    --glow-accent: 265 70% 60%;
+    --surface-elevated: 220 18% 9%;
+
+    --sidebar-background: 220 18% 5%;
+    --sidebar-foreground: 180 10% 92%;
+    --sidebar-primary: 174 72% 52%;
+    --sidebar-primary-foreground: 220 20% 4%;
+    --sidebar-accent: 220 16% 12%;
+    --sidebar-accent-foreground: 180 10% 92%;
+    --sidebar-border: 220 16% 14%;
+    --sidebar-ring: 174 72% 52%;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+
+  body {
+    @apply bg-background text-foreground font-sans antialiased;
+  }
+
+  ::selection {
+    background: hsl(174 72% 52% / 0.3);
+    color: hsl(180 10% 92%);
+  }
+}
+
+@layer utilities {
+  .glow-primary {
+    box-shadow: 0 0 20px hsl(var(--glow-primary) / 0.25),
+                0 0 60px hsl(var(--glow-primary) / 0.1);
+  }
+
+  .glow-accent {
+    box-shadow: 0 0 20px hsl(var(--glow-accent) / 0.25),
+                0 0 60px hsl(var(--glow-accent) / 0.1);
+  }
+
+  .glow-border {
+    border: 1px solid hsl(var(--glow-primary) / 0.3);
+    box-shadow: inset 0 0 20px hsl(var(--glow-primary) / 0.05),
+                0 0 20px hsl(var(--glow-primary) / 0.1);
+  }
+
+  .grid-bg {
+    background-image: 
+      linear-gradient(hsl(var(--border) / 0.3) 1px, transparent 1px),
+      linear-gradient(90deg, hsl(var(--border) / 0.3) 1px, transparent 1px);
+    background-size: 60px 60px;
+  }
+
+  .text-gradient-primary {
+    background: linear-gradient(135deg, hsl(var(--primary)), hsl(var(--accent)));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
+  .gradient-primary-bg {
+    background: linear-gradient(135deg, hsl(var(--primary)), hsl(var(--accent)));
+  }
+
+  .surface-elevated {
+    background: hsl(var(--surface-elevated));
+  }
+}
