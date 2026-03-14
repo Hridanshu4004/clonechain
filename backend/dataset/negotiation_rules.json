@@ -1,0 +1,862 @@
+{
+  "dataset_name": "Principled Negotiation Dialogue Dataset",
+  "version": "1.0",
+  "description": "AI-generated negotiation dialogues grounded in the Getting to Yes framework (Fisher, Ury & Patton, 1981/2011). Each scenario includes full dialogue annotated with GTY principles, negotiation tactics, BATNA, underlying interests, and outcome analysis. Suitable for NLP research, negotiation AI training, and educational tools.",
+  "source_framework": "Getting to Yes: Negotiating Agreement Without Giving In (Fisher, Ury & Patton)",
+  "gty_principles_used": [
+    "Separate the People from the Problem",
+    "Focus on Interests, Not Positions",
+    "Invent Options for Mutual Gain",
+    "Insist on Using Objective Criteria",
+    "Develop Your BATNA",
+    "Don't Bargain Over Positions"
+  ],
+  "schema": {
+    "scenario_fields": [
+      "id",
+      "domain",
+      "title",
+      "context",
+      "party_a",
+      "party_b",
+      "batna_a",
+      "batna_b",
+      "underlying_interests_a",
+      "underlying_interests_b",
+      "stated_positions_a",
+      "stated_positions_b",
+      "zone_of_possible_agreement",
+      "negotiation_style",
+      "outcome",
+      "final_terms",
+      "dialogue",
+      "analysis"
+    ],
+    "dialogue_fields": [
+      "turn",
+      "speaker",
+      "role",
+      "utterance",
+      "gty_principle",
+      "gty_annotation",
+      "tactic",
+      "emotion_signal"
+    ],
+    "outcome_values": [
+      "agreement",
+      "no_agreement",
+      "partial_agreement"
+    ],
+    "negotiation_style_values": [
+      "principled",
+      "positional",
+      "mixed"
+    ]
+  },
+  "statistics": {
+    "total_scenarios": 7,
+    "domains": [
+      "business_procurement",
+      "workplace_conflict",
+      "failed_negotiation",
+      "consumer_purchase",
+      "international_diplomacy_style",
+      "landlord_tenant",
+      "salary_negotiation"
+    ],
+    "total_dialogue_turns": 48,
+    "outcomes": {
+      "agreement": 6,
+      "no_agreement": 1
+    }
+  },
+  "scenarios": [
+    {
+      "id": "S001",
+      "domain": "salary_negotiation",
+      "title": "Software Engineer Salary Negotiation",
+      "context": "A software engineer with 4 years of experience is negotiating a salary increase during annual review. The manager has budget constraints but wants to retain the employee.",
+      "party_a": {
+        "role": "Employee",
+        "name": "Alex Chen"
+      },
+      "party_b": {
+        "role": "Manager",
+        "name": "Sarah Kim"
+      },
+      "batna_a": "Has a competing offer from another company for $115,000",
+      "batna_b": "Can hire a junior engineer for $80,000 but will lose institutional knowledge",
+      "underlying_interests_a": [
+        "fair market compensation",
+        "recognition of contributions",
+        "career growth",
+        "financial security"
+      ],
+      "underlying_interests_b": [
+        "retain top talent",
+        "stay within budget",
+        "maintain team morale",
+        "avoid recruitment costs"
+      ],
+      "stated_positions_a": "I want a 20% raise, bringing my salary to $108,000",
+      "stated_positions_b": "The budget only allows for a 5% raise this cycle",
+      "zone_of_possible_agreement": "$95,000\u2013$105,000 plus non-monetary benefits",
+      "negotiation_style": "principled",
+      "outcome": "agreement",
+      "final_terms": "$98,000 salary + $5,000 signing bonus + extra PTO + remote work flexibility",
+      "dialogue": [
+        {
+          "turn": 1,
+          "speaker": "Alex Chen",
+          "role": "Employee",
+          "utterance": "Sarah, I appreciate you making time for my review. I've been reflecting on the past year and I'd like to discuss my compensation. Based on my contributions to the platform rewrite and the market rate for engineers with my skills, I believe a move to $108,000 is warranted.",
+          "gty_principle": "Focus on Interests, Not Positions",
+          "gty_annotation": "Alex opens with a justification (market rate, contributions) rather than just stating a demand \u2014 grounding the position in objective criteria.",
+          "tactic": "anchoring_with_justification",
+          "emotion_signal": "confident, prepared"
+        },
+        {
+          "turn": 2,
+          "speaker": "Sarah Kim",
+          "role": "Manager",
+          "utterance": "Alex, I really value your work \u2014 the platform rewrite was exceptional. I want to be transparent: I'm working with a tight budget this cycle, and the approved band is 5%. That would put you at $90,300. I want to find something that works for both of us, though.",
+          "gty_principle": "Separate the People from the Problem",
+          "gty_annotation": "Sarah validates Alex personally while framing budget as a separate constraint \u2014 not a personal refusal. This keeps the relationship intact.",
+          "tactic": "transparency_about_constraints",
+          "emotion_signal": "empathetic, honest"
+        },
+        {
+          "turn": 3,
+          "speaker": "Alex Chen",
+          "role": "Employee",
+          "utterance": "I understand budget cycles are real. Can I share something? I've been approached by another company offering $115,000. I'd genuinely prefer to stay \u2014 I believe in this team's mission \u2014 but I have to make a responsible decision. I'm not using that offer as a threat; I just want you to understand my situation.",
+          "gty_principle": "Develop Your BATNA",
+          "gty_annotation": "Alex reveals the BATNA honestly, not as a threat but as context \u2014 consistent with principled negotiation's emphasis on transparency and legitimate leverage.",
+          "tactic": "batna_disclosure",
+          "emotion_signal": "vulnerable, sincere"
+        },
+        {
+          "turn": 4,
+          "speaker": "Sarah Kim",
+          "role": "Manager",
+          "utterance": "That's really helpful to know, and I appreciate you telling me directly. Let me think beyond just base salary for a moment. What matters most to you \u2014 is it purely the number, or are there other things like flexibility, growth path, or recognition that are important?",
+          "gty_principle": "Focus on Interests, Not Positions",
+          "gty_annotation": "Sarah skillfully pivots to exploring underlying interests rather than fighting over the numbers \u2014 the heart of principled negotiation.",
+          "tactic": "interest_elicitation",
+          "emotion_signal": "curious, collaborative"
+        },
+        {
+          "turn": 5,
+          "speaker": "Alex Chen",
+          "role": "Employee",
+          "utterance": "Honestly? The number matters, but so does feeling valued. Remote flexibility two days a week would mean a lot for my work-life balance. And I'd love a clearer path to senior engineer \u2014 I've been doing senior-level work for over a year.",
+          "gty_principle": "Invent Options for Mutual Gain",
+          "gty_annotation": "Alex expands the negotiable pie by revealing non-salary interests \u2014 creating room for creative options that could satisfy both sides.",
+          "tactic": "expanding_the_pie",
+          "emotion_signal": "open, honest"
+        },
+        {
+          "turn": 6,
+          "speaker": "Sarah Kim",
+          "role": "Manager",
+          "utterance": "Here's what I can put together: base salary of $98,000, a one-time retention bonus of $5,000 paid now, two remote days per week, and I'll formally nominate you for the senior engineer track with a target promotion review in six months. I can't match $115,000 today, but I believe this package is competitive when you factor everything in.",
+          "gty_principle": "Invent Options for Mutual Gain",
+          "gty_annotation": "Sarah constructs a package that addresses Alex's stated interests (salary, recognition, flexibility, growth) rather than just splitting the salary difference. Classic mutual-gain option.",
+          "tactic": "package_deal_creation",
+          "emotion_signal": "constructive, decisive"
+        },
+        {
+          "turn": 7,
+          "speaker": "Alex Chen",
+          "role": "Employee",
+          "utterance": "That's a thoughtful offer. The promotion timeline is actually really motivating \u2014 can we put the six-month review in writing as part of my performance plan? If I hit the criteria, I'd expect the senior title and a corresponding salary adjustment.",
+          "gty_principle": "Insist on Using Objective Criteria",
+          "gty_annotation": "Alex asks for written, objective criteria for promotion \u2014 ensuring the agreement is durable and based on standards, not goodwill.",
+          "tactic": "formalizing_objective_criteria",
+          "emotion_signal": "pragmatic, forward-looking"
+        },
+        {
+          "turn": 8,
+          "speaker": "Sarah Kim",
+          "role": "Manager",
+          "utterance": "Absolutely. I'll document the promotion criteria in your performance plan by end of week. Do we have a deal?",
+          "gty_principle": "Separate the People from the Problem",
+          "gty_annotation": "Sarah closes warmly, reinforcing the relationship. Agreement is reached without either side losing face.",
+          "tactic": "close_with_relationship_intact",
+          "emotion_signal": "relieved, warm"
+        }
+      ],
+      "analysis": {
+        "positional_bargaining_avoided": true,
+        "interests_explored": true,
+        "creative_options_generated": true,
+        "objective_criteria_used": true,
+        "relationship_preserved": true,
+        "efficiency": "high",
+        "notes": "Classic Getting to Yes case: expanding beyond salary to include non-monetary interests created a deal that neither party could have reached by haggling over the number alone."
+      }
+    },
+    {
+      "id": "S002",
+      "domain": "landlord_tenant",
+      "title": "Apartment Lease Renewal Negotiation",
+      "context": "A tenant wants to renew but rent is being raised 18%. The tenant has lived there 3 years and the landlord fears vacancy.",
+      "party_a": {
+        "role": "Tenant",
+        "name": "Maria Santos"
+      },
+      "party_b": {
+        "role": "Landlord",
+        "name": "David Park"
+      },
+      "batna_a": "Comparable apartment 10 min away for $200 less, but moving costs $1,500",
+      "batna_b": "Average vacancy period in this market is 6 weeks; new tenant brings risk",
+      "underlying_interests_a": [
+        "housing stability",
+        "fair price",
+        "avoid moving disruption",
+        "good relationship with landlord"
+      ],
+      "underlying_interests_b": [
+        "reliable rent payment",
+        "property maintenance",
+        "reduced vacancy risk",
+        "market-rate return"
+      ],
+      "stated_positions_a": "I won't pay more than a 5% increase",
+      "stated_positions_b": "The new rate is $2,200, up from $1,870. Non-negotiable.",
+      "zone_of_possible_agreement": "$1,980\u2013$2,080 with multi-year lease",
+      "negotiation_style": "mixed \u2014 starts positional, moves to principled",
+      "outcome": "agreement",
+      "final_terms": "$2,000/month with 2-year lease, tenant handles minor repairs up to $100",
+      "dialogue": [
+        {
+          "turn": 1,
+          "speaker": "Maria Santos",
+          "role": "Tenant",
+          "utterance": "Mr. Park, I received the renewal notice. An 18% increase is really steep. I've been a reliable tenant for three years \u2014 never missed rent, kept the place in great shape. I can't accept $2,200.",
+          "gty_principle": "Don't Bargain Over Positions",
+          "gty_annotation": "Maria opens with a positional refusal but anchors it in objective merit (3-year track record) \u2014 partially principled but still position-focused.",
+          "tactic": "appeal_to_track_record",
+          "emotion_signal": "frustrated, assertive"
+        },
+        {
+          "turn": 2,
+          "speaker": "David Park",
+          "role": "Landlord",
+          "utterance": "Maria, I appreciate your tenancy. But my costs have gone up \u2014 insurance, property tax, maintenance. Every comparable unit in this zip code is going for $2,200 or more right now.",
+          "gty_principle": "Insist on Using Objective Criteria",
+          "gty_annotation": "David introduces market comparables as objective criteria \u2014 a legitimate standard, though used defensively to justify a position rather than explore interests.",
+          "tactic": "market_comparables",
+          "emotion_signal": "matter-of-fact, slightly defensive"
+        },
+        {
+          "turn": 3,
+          "speaker": "Maria Santos",
+          "role": "Tenant",
+          "utterance": "Can I ask what your biggest concern is? Is it the monthly amount, or is it something else \u2014 like making sure the unit is taken care of and rent comes on time?",
+          "gty_principle": "Focus on Interests, Not Positions",
+          "gty_annotation": "Maria demonstrates excellent principled negotiation by shifting the conversation to interests \u2014 a turning point in the negotiation.",
+          "tactic": "interest_elicitation",
+          "emotion_signal": "curious, collaborative"
+        },
+        {
+          "turn": 4,
+          "speaker": "David Park",
+          "role": "Landlord",
+          "utterance": "Honestly? My worst nightmare is a bad tenant or six weeks of vacancy. You've been wonderful \u2014 I'd be foolish not to acknowledge that. I just can't leave money on the table either.",
+          "gty_principle": "Focus on Interests, Not Positions",
+          "gty_annotation": "David reveals his true interests \u2014 reliability over maximum rent \u2014 which opens the door to a creative deal.",
+          "tactic": "interest_disclosure",
+          "emotion_signal": "candid, pragmatic"
+        },
+        {
+          "turn": 5,
+          "speaker": "Maria Santos",
+          "role": "Tenant",
+          "utterance": "What if we did a two-year lease at $2,000 per month? You get the security of a reliable tenant locked in for two years with zero vacancy risk \u2014 that's worth at least $2,000 in avoided costs. And I handle any minor repairs under $100 myself, saving you calls.",
+          "gty_principle": "Invent Options for Mutual Gain",
+          "gty_annotation": "Maria creates a package deal grounded in David's interests (vacancy risk, maintenance hassle) \u2014 mutual gain through a creative option.",
+          "tactic": "multi-year_lease_as_value_exchange",
+          "emotion_signal": "confident, solution-oriented"
+        },
+        {
+          "turn": 6,
+          "speaker": "David Park",
+          "role": "Landlord",
+          "utterance": "The two-year lock-in does help my planning a lot. And if you're taking minor repairs off my plate that saves real time. I'll do $2,000 flat with a two-year term and the repair arrangement in writing. Deal?",
+          "gty_principle": "Invent Options for Mutual Gain",
+          "gty_annotation": "David accepts the reframed deal because it serves his underlying interests better than the original position would have.",
+          "tactic": "accept_mutual_gain_option",
+          "emotion_signal": "satisfied, businesslike"
+        }
+      ],
+      "analysis": {
+        "positional_bargaining_avoided": false,
+        "interests_explored": true,
+        "creative_options_generated": true,
+        "objective_criteria_used": true,
+        "relationship_preserved": true,
+        "efficiency": "medium",
+        "notes": "Negotiation started positional but turned principled when Maria asked David about his underlying interests. The multi-year lease reframed price as a risk-management exchange."
+      }
+    },
+    {
+      "id": "S003",
+      "domain": "business_procurement",
+      "title": "Software Vendor Contract Negotiation",
+      "context": "A startup is negotiating a SaaS contract with a vendor. The vendor has a standard enterprise price; the startup needs flexibility.",
+      "party_a": {
+        "role": "Buyer",
+        "name": "Priya Nair (CTO, TechStart)"
+      },
+      "party_b": {
+        "role": "Seller",
+        "name": "James Okafor (Account Executive, CloudCore)"
+      },
+      "batna_a": "Open-source alternative \u2014 free but requires 3 months of engineering time to implement",
+      "batna_b": "Lose the deal entirely; this is a new market segment CloudCore wants to enter",
+      "underlying_interests_a": [
+        "low upfront cost",
+        "scalability",
+        "quick implementation",
+        "vendor reliability"
+      ],
+      "underlying_interests_b": [
+        "new customer in startup segment",
+        "reference customer",
+        "long-term recurring revenue"
+      ],
+      "stated_positions_a": "We need your platform for under $2,000/month",
+      "stated_positions_b": "Standard pricing starts at $4,500/month for your usage tier",
+      "zone_of_possible_agreement": "$2,200\u2013$3,000/month with flexible terms",
+      "negotiation_style": "principled",
+      "outcome": "agreement",
+      "final_terms": "$2,400/month for Year 1 (startup discount), $3,200 Year 2, in exchange for public case study and logo usage",
+      "dialogue": [
+        {
+          "turn": 1,
+          "speaker": "Priya Nair",
+          "role": "Buyer",
+          "utterance": "James, we love the product \u2014 it solves a real pain point. But $4,500 a month is just not in our budget at our stage. We're a 20-person startup. We'd need to be under $2,000 to make this work.",
+          "gty_principle": "Focus on Interests, Not Positions",
+          "gty_annotation": "Priya gives context for her position (startup stage) which begins to signal interests, but is still framed as a positional limit.",
+          "tactic": "contextual_anchoring",
+          "emotion_signal": "direct, transparent"
+        },
+        {
+          "turn": 2,
+          "speaker": "James Okafor",
+          "role": "Seller",
+          "utterance": "I hear you, Priya. Before we talk numbers, help me understand your roadmap. Where do you see your user base in 12 months? 24 months?",
+          "gty_principle": "Focus on Interests, Not Positions",
+          "gty_annotation": "James deflects from positional haggling and gathers interest/future data \u2014 setting up a longer-term value proposition.",
+          "tactic": "future_state_questioning",
+          "emotion_signal": "strategic, curious"
+        },
+        {
+          "turn": 3,
+          "speaker": "Priya Nair",
+          "role": "Buyer",
+          "utterance": "We're projecting 5x growth in 18 months. If we hit our Series A, this could be a major platform for us \u2014 we'd probably be at the $4,000\u2013$5,000 tier naturally by then. Right now we just need to survive Year 1.",
+          "gty_principle": "Focus on Interests, Not Positions",
+          "gty_annotation": "Priya reveals the real interest: survival/bridge to growth, not permanent discount. This creates a path for James.",
+          "tactic": "interest_revelation",
+          "emotion_signal": "honest, slightly vulnerable"
+        },
+        {
+          "turn": 4,
+          "speaker": "James Okafor",
+          "role": "Seller",
+          "utterance": "Here's what I'm thinking. CloudCore has been wanting to build credibility in the startup world. If we could feature TechStart as a case study \u2014 a written post and logo on our site \u2014 that has real value for us. Would you be open to a startup pricing arrangement in exchange for that?",
+          "gty_principle": "Invent Options for Mutual Gain",
+          "gty_annotation": "James introduces a non-monetary value exchange \u2014 public reference \u2014 that costs Priya little but is worth a lot to CloudCore. Mutual gain.",
+          "tactic": "value_exchange_creative_option",
+          "emotion_signal": "inventive, enthusiastic"
+        },
+        {
+          "turn": 5,
+          "speaker": "Priya Nair",
+          "role": "Buyer",
+          "utterance": "A case study is doable if the product delivers \u2014 which I believe it will. What number does that unlock?",
+          "gty_principle": "Invent Options for Mutual Gain",
+          "gty_annotation": "Priya accepts the logic of the exchange and moves to specifics \u2014 deal is now on cooperative footing.",
+          "tactic": "conditional_acceptance",
+          "emotion_signal": "pragmatic, engaged"
+        },
+        {
+          "turn": 6,
+          "speaker": "James Okafor",
+          "role": "Seller",
+          "utterance": "I can offer $2,400 for Year 1 \u2014 that's our official startup tier \u2014 with a scheduled move to $3,200 in Year 2 as you scale. The case study and logo rights are part of the agreement. This gets you live fast, and us into a new segment. I think it's a fair deal.",
+          "gty_principle": "Insist on Using Objective Criteria",
+          "gty_annotation": "James proposes a structured pricing ladder tied to objective business growth \u2014 fair, transparent, and reciprocal.",
+          "tactic": "tiered_pricing_ladder",
+          "emotion_signal": "confident, fair"
+        },
+        {
+          "turn": 7,
+          "speaker": "Priya Nair",
+          "role": "Buyer",
+          "utterance": "That works. One ask: can we include a 30-day exit clause in Year 1 in case the implementation doesn't go smoothly? That's a standard risk protection for us.",
+          "gty_principle": "Insist on Using Objective Criteria",
+          "gty_annotation": "Priya invokes a standard industry practice (exit clause) as objective criteria \u2014 not a personal demand but a reasonable protection.",
+          "tactic": "objective_risk_protection",
+          "emotion_signal": "measured, professional"
+        },
+        {
+          "turn": 8,
+          "speaker": "James Okafor",
+          "role": "Seller",
+          "utterance": "Fair enough. I'll add a 30-day implementation exit clause. Welcome to CloudCore, Priya.",
+          "gty_principle": "Separate the People from the Problem",
+          "gty_annotation": "James closes warmly \u2014 the problem was solved without harming the new relationship. Both parties feel good.",
+          "tactic": "close_relationship_first",
+          "emotion_signal": "warm, professional"
+        }
+      ],
+      "analysis": {
+        "positional_bargaining_avoided": true,
+        "interests_explored": true,
+        "creative_options_generated": true,
+        "objective_criteria_used": true,
+        "relationship_preserved": true,
+        "efficiency": "high",
+        "notes": "The case study exchange is the creative linchpin \u2014 both parties found value outside the price dimension, enabling a deal below CloudCore's floor by compensating with non-monetary value."
+      }
+    },
+    {
+      "id": "S004",
+      "domain": "workplace_conflict",
+      "title": "Team Resource Allocation Dispute",
+      "context": "Two department heads are competing for the same two engineers for Q3. One needs them for a client deadline, the other for an internal infrastructure project.",
+      "party_a": {
+        "role": "Department Head \u2013 Client Projects",
+        "name": "Tom Rivera"
+      },
+      "party_b": {
+        "role": "Department Head \u2013 Engineering",
+        "name": "Lena Fischer"
+      },
+      "batna_a": "Hire a contractor for $15,000 \u2014 expensive, risky ramp-up time",
+      "batna_b": "Delay infrastructure project by one quarter \u2014 acceptable but painful",
+      "underlying_interests_a": [
+        "meet client SLA",
+        "protect company revenue",
+        "not lose the client"
+      ],
+      "underlying_interests_b": [
+        "prevent tech debt from compounding",
+        "protect team from burnout",
+        "deliver reliability improvements"
+      ],
+      "stated_positions_a": "I need both engineers for all of Q3",
+      "stated_positions_b": "Both engineers are committed to the infrastructure project \u2014 it was planned first",
+      "zone_of_possible_agreement": "Split engineer time; stagger timelines",
+      "negotiation_style": "principled",
+      "outcome": "agreement",
+      "final_terms": "One engineer full-time to Tom for 6 weeks; second engineer split 60/40 for the quarter; infrastructure project shifted 3 weeks",
+      "dialogue": [
+        {
+          "turn": 1,
+          "speaker": "Tom Rivera",
+          "role": "Client Projects Head",
+          "utterance": "Lena, I have a client with a contractual SLA deadline in eight weeks. If I miss it, we're looking at $200K in penalties and potentially losing a $1M account. I need both engineers.",
+          "gty_principle": "Focus on Interests, Not Positions",
+          "gty_annotation": "Tom leads with the business consequence rather than just the demand \u2014 grounding his position in legitimate, verifiable stakes.",
+          "tactic": "consequence_framing",
+          "emotion_signal": "urgent, stressed"
+        },
+        {
+          "turn": 2,
+          "speaker": "Lena Fischer",
+          "role": "Engineering Head",
+          "utterance": "Tom, I hear you. But this infrastructure project was approved at the beginning of the year. If we delay again, the team's morale will tank \u2014 they've already postponed twice. And the tech debt is causing five hours of lost productivity per week across the company.",
+          "gty_principle": "Focus on Interests, Not Positions",
+          "gty_annotation": "Lena counters with her own legitimate interests \u2014 team morale, company-wide productivity \u2014 equally valid and measurable.",
+          "tactic": "quantified_interests",
+          "emotion_signal": "firm, protective of her team"
+        },
+        {
+          "turn": 3,
+          "speaker": "Tom Rivera",
+          "role": "Client Projects Head",
+          "utterance": "I don't want to dismiss your project \u2014 what specifically in the infrastructure work is most critical to get done this quarter versus what could shift?",
+          "gty_principle": "Focus on Interests, Not Positions",
+          "gty_annotation": "Tom seeks to understand the priority within Lena's interest \u2014 a classic principled move that creates room for disaggregation.",
+          "tactic": "priority_disaggregation",
+          "emotion_signal": "curious, problem-solving"
+        },
+        {
+          "turn": 4,
+          "speaker": "Lena Fischer",
+          "role": "Engineering Head",
+          "utterance": "The database migration is non-negotiable \u2014 it's a security risk. The API refactor can be phased. So technically, one engineer could start the migration, while the second could help you for the first six weeks, then join migration work.",
+          "gty_principle": "Invent Options for Mutual Gain",
+          "gty_annotation": "Lena disaggregates her own project into critical vs. flexible work \u2014 this is the kind of creative option-generation that expands possibilities.",
+          "tactic": "scope_disaggregation",
+          "emotion_signal": "analytical, cooperative"
+        },
+        {
+          "turn": 5,
+          "speaker": "Tom Rivera",
+          "role": "Client Projects Head",
+          "utterance": "That could work. What if Engineer A goes full-time to my project for weeks 1\u20136, then transitions back to infrastructure? And Engineer B does 60% my project, 40% migration during Q3?",
+          "gty_principle": "Invent Options for Mutual Gain",
+          "gty_annotation": "Tom proposes a concrete time-sharing model \u2014 a specific mutual-gain option neither party had articulated before the conversation.",
+          "tactic": "time_sharing_proposal",
+          "emotion_signal": "problem-solving, collaborative"
+        },
+        {
+          "turn": 6,
+          "speaker": "Lena Fischer",
+          "role": "Engineering Head",
+          "utterance": "I can work with that if we document it clearly so the engineers aren't caught in the middle. And I want a formal commitment that they're released back to infrastructure by week 7 \u2014 no extensions without a new negotiation.",
+          "gty_principle": "Insist on Using Objective Criteria",
+          "gty_annotation": "Lena insists on written terms and defined boundaries \u2014 using objective criteria (documented timelines) to protect both parties.",
+          "tactic": "documented_objective_commitments",
+          "emotion_signal": "pragmatic, protective"
+        },
+        {
+          "turn": 7,
+          "speaker": "Tom Rivera",
+          "role": "Client Projects Head",
+          "utterance": "Deal. I'll send a written summary to both of us and CC our VP to make it official. And Lena \u2014 thanks for being flexible. I know this wasn't easy.",
+          "gty_principle": "Separate the People from the Problem",
+          "gty_annotation": "Tom closes with personal acknowledgment \u2014 reinforcing the relationship. The problem was solved while the relationship between two colleagues was maintained.",
+          "tactic": "relationship_acknowledgment_close",
+          "emotion_signal": "grateful, relieved"
+        }
+      ],
+      "analysis": {
+        "positional_bargaining_avoided": true,
+        "interests_explored": true,
+        "creative_options_generated": true,
+        "objective_criteria_used": true,
+        "relationship_preserved": true,
+        "efficiency": "high",
+        "notes": "The turning point was Lena disaggregating her own project needs \u2014 showing that not all of the infrastructure work was equally time-sensitive. This is a textbook example of expanding the zone of agreement by exploring interests rather than defending positions."
+      }
+    },
+    {
+      "id": "S005",
+      "domain": "consumer_purchase",
+      "title": "Used Car Price Negotiation",
+      "context": "A buyer is negotiating the price of a used car at a dealership. The listed price is $18,500.",
+      "party_a": {
+        "role": "Buyer",
+        "name": "Kevin O'Brien"
+      },
+      "party_b": {
+        "role": "Car Dealer",
+        "name": "Rosa Mendez"
+      },
+      "batna_a": "A comparable car at another dealer for $17,200, but it's 30 miles away and has slightly higher mileage",
+      "batna_b": "Car has been on the lot for 45 days \u2014 floor plan costs accumulating",
+      "underlying_interests_a": [
+        "fair price",
+        "reliable vehicle",
+        "quick purchase",
+        "not feeling fooled"
+      ],
+      "underlying_interests_b": [
+        "close the deal today",
+        "clear aging inventory",
+        "maintain margin on trade-in value"
+      ],
+      "stated_positions_a": "I won't pay more than $16,500",
+      "stated_positions_b": "Best I can do is $17,800",
+      "zone_of_possible_agreement": "$16,800\u2013$17,400",
+      "negotiation_style": "mixed \u2014 positional with some principled elements",
+      "outcome": "agreement",
+      "final_terms": "$17,100 with free 12-month roadside assistance added",
+      "dialogue": [
+        {
+          "turn": 1,
+          "speaker": "Kevin O'Brien",
+          "role": "Buyer",
+          "utterance": "I like the car. I've done some research \u2014 KBB shows the private party value at $16,200 and the comparable at AutoWorld down the road is listed at $17,200. I'd like to offer $16,500.",
+          "gty_principle": "Insist on Using Objective Criteria",
+          "gty_annotation": "Kevin leads with objective market data (KBB, competitor listing) \u2014 anchoring the offer in external standards rather than arbitrary preference.",
+          "tactic": "objective_market_anchoring",
+          "emotion_signal": "prepared, matter-of-fact"
+        },
+        {
+          "turn": 2,
+          "speaker": "Rosa Mendez",
+          "role": "Dealer",
+          "utterance": "I appreciate the research. Our car has lower mileage than the AutoWorld one by 8,000 miles and it just passed our 50-point inspection. That's worth a premium. I can come down to $17,800 and that's already below what we have in it.",
+          "gty_principle": "Insist on Using Objective Criteria",
+          "gty_annotation": "Rosa counters with objective differentiators (lower mileage, inspection) \u2014 also using criteria, but to justify a higher price.",
+          "tactic": "competitive_differentiation",
+          "emotion_signal": "professional, measured"
+        },
+        {
+          "turn": 3,
+          "speaker": "Kevin O'Brien",
+          "role": "Buyer",
+          "utterance": "The lower mileage is fair to consider. At 8,000 miles less, that's maybe $400\u2013600 more by standard depreciation curves. So I'd say $16,900 is more defensible. What does closing this deal today mean for you?",
+          "gty_principle": "Focus on Interests, Not Positions",
+          "gty_annotation": "Kevin acknowledges Rosa's point and quantifies it \u2014 then pivots to ask about her interest in timing, a principled move.",
+          "tactic": "acknowledge_and_pivot_to_interests",
+          "emotion_signal": "analytical, curious"
+        },
+        {
+          "turn": 4,
+          "speaker": "Rosa Mendez",
+          "role": "Dealer",
+          "utterance": "Between us \u2014 this car has been here 45 days. I'd really like to move it. What would it take to get you to sign today?",
+          "gty_principle": "Focus on Interests, Not Positions",
+          "gty_annotation": "Rosa reveals her interest (aged inventory, close today) \u2014 a candid moment that validates Kevin's leverage and opens room for creative resolution.",
+          "tactic": "interest_disclosure",
+          "emotion_signal": "candid, slightly eager"
+        },
+        {
+          "turn": 5,
+          "speaker": "Kevin O'Brien",
+          "role": "Buyer",
+          "utterance": "Meet me at $17,100 and throw in a year of roadside assistance. That's a package I can shake hands on right now.",
+          "gty_principle": "Invent Options for Mutual Gain",
+          "gty_annotation": "Kevin creates a package by adding a low-cost item (roadside assistance) to sweeten a price slightly above his floor \u2014 mutual gain.",
+          "tactic": "add_low_cost_sweetener",
+          "emotion_signal": "decisive, friendly"
+        },
+        {
+          "turn": 6,
+          "speaker": "Rosa Mendez",
+          "role": "Dealer",
+          "utterance": "Roadside assistance costs me $80 wholesale. $17,100 plus that? You've got a deal. Let me get the paperwork.",
+          "gty_principle": "Invent Options for Mutual Gain",
+          "gty_annotation": "Rosa accepts because the roadside assistance is low cost to her but high perceived value to Kevin \u2014 a mutual gain creative option.",
+          "tactic": "low_cost_high_value_close",
+          "emotion_signal": "satisfied, efficient"
+        }
+      ],
+      "analysis": {
+        "positional_bargaining_avoided": false,
+        "interests_explored": true,
+        "creative_options_generated": true,
+        "objective_criteria_used": true,
+        "relationship_preserved": true,
+        "efficiency": "medium-high",
+        "notes": "A largely positional negotiation elevated by both parties using objective criteria (KBB, mileage depreciation, aging inventory cost). The roadside assistance sweetener resolved the gap at low cost \u2014 a small but effective mutual-gain creative option."
+      }
+    },
+    {
+      "id": "S006",
+      "domain": "international_diplomacy_style",
+      "title": "Community Dispute: Library Hours vs. Youth Center Noise",
+      "context": "A library and a youth community center share a building. The library wants quiet evenings; the youth center runs loud programs from 5\u20138pm.",
+      "party_a": {
+        "role": "Library Director",
+        "name": "Helen Zhao"
+      },
+      "party_b": {
+        "role": "Youth Center Director",
+        "name": "Marcus Webb"
+      },
+      "batna_a": "File a formal noise complaint with the city \u2014 damages relationship and may take 6 months",
+      "batna_b": "Move evening programs to a church hall 2 miles away \u2014 inconvenient for participants",
+      "underlying_interests_a": [
+        "patron focus and quiet",
+        "serve adult readers in evenings",
+        "professional environment"
+      ],
+      "underlying_interests_b": [
+        "accessible location for at-risk youth",
+        "vibrant program attendance",
+        "community impact"
+      ],
+      "stated_positions_a": "No amplified sound after 5pm in the shared wing",
+      "stated_positions_b": "Our programs run until 8pm and we have a right to use the space",
+      "zone_of_possible_agreement": "Acoustic separation, schedule coordination",
+      "negotiation_style": "principled",
+      "outcome": "agreement",
+      "final_terms": "Acoustic panels installed (cost split), loud programs moved to east wing, quiet study hour 6\u20137pm library expansion into shared foyer",
+      "dialogue": [
+        {
+          "turn": 1,
+          "speaker": "Helen Zhao",
+          "role": "Library Director",
+          "utterance": "Marcus, I want to find a way forward that works for both of us. I'm not trying to shut down your programs \u2014 they're genuinely important for the neighborhood. But I'm losing adult patrons in the evenings because of the noise bleed. Can we talk about what's driving each of our concerns?",
+          "gty_principle": "Separate the People from the Problem",
+          "gty_annotation": "Helen opens by affirming the relationship and Marcus's mission \u2014 separating the person from the problem before engaging with it.",
+          "tactic": "affirm_before_confront",
+          "emotion_signal": "collaborative, respectful"
+        },
+        {
+          "turn": 2,
+          "speaker": "Marcus Webb",
+          "role": "Youth Center Director",
+          "utterance": "I appreciate that. Honestly, our biggest challenge is that many of our kids can't get here before 5pm because of school. The 5\u20138pm window is when we can actually reach them. The music and games \u2014 that's engagement strategy, not just noise.",
+          "gty_principle": "Focus on Interests, Not Positions",
+          "gty_annotation": "Marcus explains the reasoning behind his position \u2014 revealing that the timing and engagement format are driven by the youth's constraints, not preference.",
+          "tactic": "interest_explanation",
+          "emotion_signal": "passionate, sincere"
+        },
+        {
+          "turn": 3,
+          "speaker": "Helen Zhao",
+          "role": "Library Director",
+          "utterance": "That makes a lot of sense. What if we thought about this physically rather than temporally? I wonder if moving the louder activities to the east wing \u2014 which shares fewer walls with our reading rooms \u2014 would reduce the bleed significantly.",
+          "gty_principle": "Invent Options for Mutual Gain",
+          "gty_annotation": "Helen shifts from time-based to space-based solution \u2014 a creative reframe that doesn't require either party to give up their core schedule.",
+          "tactic": "physical_reframe",
+          "emotion_signal": "inventive, solution-seeking"
+        },
+        {
+          "turn": 4,
+          "speaker": "Marcus Webb",
+          "role": "Youth Center Director",
+          "utterance": "The east wing would work for most things. The main concern is acoustic panels \u2014 we'd need some soundproofing between the wings. That costs money neither of us has individually.",
+          "gty_principle": "Invent Options for Mutual Gain",
+          "gty_annotation": "Marcus surfaces a shared implementation obstacle \u2014 which immediately reframes both parties as having a common problem to solve together.",
+          "tactic": "shared_obstacle_identification",
+          "emotion_signal": "pragmatic, open"
+        },
+        {
+          "turn": 5,
+          "speaker": "Helen Zhao",
+          "role": "Library Director",
+          "utterance": "What if we co-apply for a city facilities improvement grant? I know the neighborhood council has a small fund for exactly this kind of shared-space upgrade. We could split the application effort and share the panels.",
+          "gty_principle": "Invent Options for Mutual Gain",
+          "gty_annotation": "Helen invents a third-party resource option \u2014 neither party bears the cost alone, and the grant application itself becomes a collaborative act.",
+          "tactic": "third_party_resource_option",
+          "emotion_signal": "resourceful, genuinely collaborative"
+        },
+        {
+          "turn": 6,
+          "speaker": "Marcus Webb",
+          "role": "Youth Center Director",
+          "utterance": "I love that idea. And you know, we've been wanting more study space for our older teens during quiet hours. What if we offered the library use of our east foyer between 6 and 7pm \u2014 a quiet study overflow zone for both communities?",
+          "gty_principle": "Invent Options for Mutual Gain",
+          "gty_annotation": "Marcus generates an additional mutual gain \u2014 his foyer as library overflow creates shared community value and deepens cooperation.",
+          "tactic": "reciprocal_resource_sharing",
+          "emotion_signal": "enthusiastic, generous"
+        },
+        {
+          "turn": 7,
+          "speaker": "Helen Zhao",
+          "role": "Library Director",
+          "utterance": "That's actually wonderful. We'd both benefit from that, and it tells the city council a great story when we apply for the grant. I think we've found something genuinely better than what either of us came in with.",
+          "gty_principle": "Invent Options for Mutual Gain",
+          "gty_annotation": "Helen recognizes the outcome surpasses both parties' original asks \u2014 the hallmark of a well-executed principled negotiation.",
+          "tactic": "recognize_superior_outcome",
+          "emotion_signal": "delighted, collaborative"
+        }
+      ],
+      "analysis": {
+        "positional_bargaining_avoided": true,
+        "interests_explored": true,
+        "creative_options_generated": true,
+        "objective_criteria_used": true,
+        "relationship_preserved": true,
+        "efficiency": "high",
+        "notes": "A near-perfect GTY outcome: both parties left better off than their opening positions. The shift from time-based to space-based framing was the key creative move. The joint grant application transformed competitors into collaborators."
+      }
+    },
+    {
+      "id": "S007",
+      "domain": "failed_negotiation",
+      "title": "Freelance Designer Rate Dispute (Breakdown)",
+      "context": "A freelance designer is negotiating a rate increase with a long-term client. The negotiation breaks down due to positional bargaining on both sides.",
+      "party_a": {
+        "role": "Freelancer",
+        "name": "Jordan Lee"
+      },
+      "party_b": {
+        "role": "Client",
+        "name": "Greg Hanson (Marketing Director)"
+      },
+      "batna_a": "Take on new clients at higher rates \u2014 realistic but takes time",
+      "batna_b": "Use offshore design service at $25/hour \u2014 quality risk but cheaper",
+      "underlying_interests_a": [
+        "sustainable income",
+        "recognition of skill growth",
+        "fair market rate"
+      ],
+      "underlying_interests_b": [
+        "cost control",
+        "design consistency",
+        "avoid onboarding new vendor"
+      ],
+      "stated_positions_a": "I'm raising my rate from $65 to $95/hour effective next month",
+      "stated_positions_b": "That's a 46% jump. I'll pay $70/hour and that's final.",
+      "zone_of_possible_agreement": "$78\u2013$85/hour was reachable, but neither party explored it",
+      "negotiation_style": "positional \u2014 both sides",
+      "outcome": "no_agreement",
+      "final_terms": null,
+      "dialogue": [
+        {
+          "turn": 1,
+          "speaker": "Jordan Lee",
+          "role": "Freelancer",
+          "utterance": "Greg, I need to let you know that my rates are going up to $95/hour starting next month. The market rate for senior UX has risen a lot and I've invested heavily in new skills.",
+          "gty_principle": "Don't Bargain Over Positions",
+          "gty_annotation": "Jordan delivers an ultimatum without exploring interests first \u2014 classic positional opening that puts Greg on the defensive.",
+          "tactic": "positional_ultimatum",
+          "emotion_signal": "assertive, slightly anxious"
+        },
+        {
+          "turn": 2,
+          "speaker": "Greg Hanson",
+          "role": "Client",
+          "utterance": "That's a 46% increase, Jordan. That's not going to happen. I can go to $70 but that's as far as I'll stretch.",
+          "gty_principle": "Don't Bargain Over Positions",
+          "gty_annotation": "Greg responds with his own positional counter \u2014 no exploration of interests, no curiosity about Jordan's reasoning. Classic positional escalation.",
+          "tactic": "counter_positional_anchor",
+          "emotion_signal": "defensive, dismissive"
+        },
+        {
+          "turn": 3,
+          "speaker": "Jordan Lee",
+          "role": "Freelancer",
+          "utterance": "I've been with you for three years. $70 doesn't respect that history or what I bring to your brand.",
+          "gty_principle": "Separate the People from the Problem",
+          "gty_annotation": "Jordan introduces the relationship emotionally \u2014 but as a bargaining chip rather than genuinely separating people from the problem. This muddies the negotiation.",
+          "tactic": "emotional_appeal_to_loyalty",
+          "emotion_signal": "hurt, frustrated"
+        },
+        {
+          "turn": 4,
+          "speaker": "Greg Hanson",
+          "role": "Client",
+          "utterance": "I respect the history. But I have offshore options at $30/hour. I'm choosing to pay more because I value consistency. $70 is fair.",
+          "gty_principle": "Don't Bargain Over Positions",
+          "gty_annotation": "Greg invokes the offshore threat as leverage \u2014 a dirty tactic of artificial alternatives designed to pressure rather than problem-solve.",
+          "tactic": "artificial_alternative_threat",
+          "emotion_signal": "defensive, power-asserting"
+        },
+        {
+          "turn": 5,
+          "speaker": "Jordan Lee",
+          "role": "Freelancer",
+          "utterance": "Then maybe you should use them. I'm not dropping below $90.",
+          "gty_principle": "Don't Bargain Over Positions",
+          "gty_annotation": "Jordan digs into a new, higher floor out of anger \u2014 positions have actually diverged as a result of positional bargaining. The breakdown is now likely.",
+          "tactic": "positional_escalation",
+          "emotion_signal": "angry, entrenched"
+        },
+        {
+          "turn": 6,
+          "speaker": "Greg Hanson",
+          "role": "Client",
+          "utterance": "Fine. I'll explore other options. This conversation is over.",
+          "gty_principle": "Don't Bargain Over Positions",
+          "gty_annotation": "Negotiation collapses. Neither party explored interests, generated options, or used objective criteria. A deal in the $78\u201385 range was likely achievable.",
+          "tactic": "walkout",
+          "emotion_signal": "angry, closed"
+        }
+      ],
+      "analysis": {
+        "positional_bargaining_avoided": false,
+        "interests_explored": false,
+        "creative_options_generated": false,
+        "objective_criteria_used": false,
+        "relationship_preserved": false,
+        "efficiency": "low",
+        "notes": "A textbook Getting to Yes failure case. Neither party asked 'why?' about the other's position. Jordan never asked what Greg's budget constraints were; Greg never asked what was driving Jordan's rate increase. The offshore threat was a dirty tactic that escalated rather than resolved the conflict. A three-year relationship ended over a gap that principled negotiation would likely have bridged."
+      }
+    }
+  ]
+}

@@ -8,7 +8,7 @@ const userSchema = new mongoose.Schema(
     email: { type: String, required: true, unique: true },
     password: { type: String, required: true },
     occupation: { type: String },
-    walletAddress: { type: String, unique: true, sparse: true }, // sparse: true allows nulls if they haven't linked yet
+    walletAddress: { type: String, sparse: true }, // Removed unique constraint to allow wallet switching
 
     // --- AI Personality (From your images/conclusion) ---
     customInstructions: { type: String, default: "" },

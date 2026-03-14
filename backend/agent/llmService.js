@@ -1,6 +1,12 @@
 import axios from "axios";
 import { GoogleGenerativeAI } from "@google/generative-ai";
-import 'dotenv/config'; // Ensures process.env.GEMINI_API_KEY is read
+import OpenAI from "openai";
+import 'dotenv/config'; // Ensures API keys are read
+
+// Initialize OpenAI client if API key is present
+const openai = process.env.OPENAI_API_KEY ? new OpenAI({
+  apiKey: process.env.OPENAI_API_KEY
+}) : null;
 
 // Only initialize Gemini if the API key is present
 const genAI = process.env.GEMINI_API_KEY ? new GoogleGenerativeAI(process.env.GEMINI_API_KEY) : null;
@@ -35,6 +41,33 @@ async function runGeminiWithUsage(messages) {
   }
 }
 
+async function runOpenAIWithUsage(messages) {
+  if (!openai) {
+    console.warn("OpenAI API key missing. Falling back to Ollama.");
+    return null;
+  }
+
+  try {
+    const response = await openai.chat.completions.create({
+      model: "gpt-3.5-turbo",
+      messages: messages.map(m => ({
+        role: m.role,
+        content: m.content || m.message
+      })),
+      temperature: 0.7,
+      max_tokens: 1000
+    });
+
+    const text = response.choices[0].message.content;
+    const tokens = response.usage?.total_tokens ?? 0;
+
+    return { text, tokens };
+  } catch (error) {
+    console.error("OpenAI Error:", error);
+    return { text: "Error: OpenAI connection failed.", tokens: 0 };
+  }
+}
+
 async function runOllamaWithUsage(messages) {
   try {
     const response = await axios.post(
@@ -59,6 +92,12 @@ async function runOllamaWithUsage(messages) {
 }
 
 export async function runLLMWithUsage(messages, brainType = "ollama") {
+  // If explicitly asked for OpenAI AND the key exists, run it
+  if (brainType === "openai" && openai) {
+    const openaiResult = await runOpenAIWithUsage(messages);
+    if (openaiResult) return openaiResult;
+  }
+
   // If explicitly asked for Gemini AND the key exists, run it
   if (brainType === "gemini" && genAI) {
     const geminiResult = await runGeminiWithUsage(messages);

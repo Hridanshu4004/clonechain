@@ -5,6 +5,7 @@ import connectDB from './config/db.js';
 import authRoutes from './routes/authRoute.js';
 import agentRoutes from './routes/agentRoute.js';
 import meetingRoutes from './routes/meetingRoute.js';
+import negotiateRoute from './routes/negotiate.js';
 
 dotenv.config();
 connectDB();
@@ -37,6 +38,7 @@ app.use((req, res, next) => {
 app.use('/api/auth', authRoutes);
 app.use('/api/agents', agentRoutes);
 app.use('/api/meeting', meetingRoutes);
+app.use('/api/negotiate', negotiateRoute);
 
 
 // app.use(notFound);
