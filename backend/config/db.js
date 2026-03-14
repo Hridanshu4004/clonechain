@@ -5,12 +5,15 @@ dotenv.config();
 
 const connectDB = async () => {
   try {
-    // 1. Establish the initial connection
-    const conn = await mongoose.connect(process.env.MONGO_URI || 'mongodb://127.0.0.1:27017/clonechain');
+    const mongoURI = process.env.MONGODB_URI || process.env.MONGO_URI || 'mongodb://localhost:27017/clonechain';
+    
+    console.log('🔄 Connecting to MongoDB...');
+    
+    const conn = await mongoose.connect(mongoURI);
 
-    console.log(`✅ MongoDB Connected: ${conn.connection.host}`);
-
-    // 2. Monitor connection events (Post-Connection)
+    console.log('✓ MongoDB Connected Successfully');
+    
+    // Monitor connection events
     mongoose.connection.on('error', (err) => {
       console.error(`🔥 Mongoose connection error: ${err}`);
     });
@@ -19,17 +22,17 @@ const connectDB = async () => {
       console.warn('⚠️ Mongoose disconnected. Attempting to reconnect...');
     });
 
+    return mongoose.connection;
   } catch (error) {
-    console.error(`❌ Initial Connection Error: ${error.message}`);
-    process.exit(1); // Stop the server if we can't connect at startup
+    console.error('✗ MongoDB Connection Error:', error.message);
+    process.exit(1);
   }
 };
 
-// Handle Graceful Shutdown (Important for production)
+export default connectDB;
+
 process.on('SIGINT', async () => {
   await mongoose.connection.close();
   console.log('🛑 MongoDB connection closed due to app termination');
   process.exit(0);
 });
-
-export default connectDB;
