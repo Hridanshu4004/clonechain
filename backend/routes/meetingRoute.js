@@ -1,5 +1,6 @@
 import express from 'express';
 import { handleMeetingChat,initMeeting } from '../controllers/meetingController.js';
+import Meeting from '../models/Meeting.js';
 
 const router = express.Router();
 
@@ -8,7 +9,7 @@ router.post('/chat', handleMeetingChat);
 
 
 // Initialize a new shared meeting room
-router.get('/init/:agentId', initMeeting);
+router.post('/init/:agentId', initMeeting);
 
 
 // GET meeting details by Room ID
