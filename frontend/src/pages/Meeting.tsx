@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { useParams, useSearchParams } from "react-router-dom"; // Updated
+import { useParams, useSearchParams } from "react-router-dom";
 import ChatBubble from "@/components/agents/ChatBubble";
 import { Button } from "@/components/ui/button";
 import { useContract } from "@/hooks/useContract";
@@ -10,9 +10,10 @@ import { motion } from "framer-motion";
 import axios from "axios";
 
 const Meeting = () => {
+  // roomId from URL: /arena/:id
   const { id: meetingId } = useParams(); 
   const [searchParams] = useSearchParams();
-  const agentId = searchParams.get("agentId"); // Capture the agent ID from URL
+  const agentIdFromUrl = searchParams.get("agentId"); 
   
   const { isConnected } = useWallet();
   const { finalizeAgreement, isLoading: isContractLoading } = useContract();
@@ -25,30 +26,51 @@ const Meeting = () => {
   const [inputText, setInputText] = useState("");
   const [isTyping, setIsTyping] = useState(false);
   const [agentData, setAgentData] = useState<any>(null);
+  const [meetingData, setMeetingData] = useState<any>(null); // Added for Goal/Context
   const [isInitialLoading, setIsInitialLoading] = useState(true);
 
-  // Fetch specific Agent Data based on the URL parameter
+  // Fetch Meeting Room Data (which includes the Agent)
   useEffect(() => {
-    const fetchAgent = async () => {
-      if (!agentId) {
+    const fetchRoomData = async () => {
+      if (!meetingId) {
         setIsInitialLoading(false);
         return;
       }
       try {
-        const res = await axios.get(`http://localhost:5000/api/agents/${agentId}`); 
-        setAgentData(res.data);
+        // We fetch the room by the roomId (the 6-char code)
+        const res = await axios.get(`http://localhost:5000/api/meeting/room/${meetingId}`);
+        
+        setMeetingData(res.data);
+        
+        // Map the agent from the meeting participants to your existing agentData state
+        // This keeps your UI logic working perfectly
+        if (res.data.participants?.agentA?.id) {
+          setAgentData(res.data.participants.agentA.id);
+        } else if (agentIdFromUrl) {
+          // Fallback if the meeting doesn't have the agent populated yet
+          const agentRes = await axios.get(`http://localhost:5000/api/agents/${agentIdFromUrl}`);
+          setAgentData(agentRes.data);
+        }
+
+        // Set live status based on database result
+        if (res.data.result?.status !== 'ongoing') {
+          setIsLive(false);
+        }
+
       } catch (err) {
-        toast.error("Failed to load agent identity from the Lab");
+        console.error("Room fetch error:", err);
+        toast.error("Meeting room not found or expired.");
       } finally {
         setIsInitialLoading(false);
       }
     };
-    fetchAgent();
-  }, [agentId]);
+    fetchRoomData();
+  }, [meetingId, agentIdFromUrl]);
 
   const sendMessage = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!inputText.trim() || !agentData) return;
+    // We now check for meetingData too to ensure context exists
+    if (!inputText.trim() || !agentData || !meetingData) return;
 
     const userMsg = {
       id: Date.now().toString(),
@@ -65,12 +87,11 @@ const Meeting = () => {
 
     try {
       // Hit the Meeting Chat Controller
-      // We pass agentData so the backend knows the boundaries and personality
       const res = await axios.post("http://localhost:5000/api/meeting/chat", {
         agentId: agentData._id,
-        meetingId: meetingId,
+        roomId: meetingId, // Passing the 6-char Room ID
         message: currentInput,
-        agentData: agentData 
+        // The backend uses meetingId to pull 'goal' and 'history' from MongoDB
       });
 
       const aiMsg = {
@@ -83,7 +104,6 @@ const Meeting = () => {
 
       setMessages((prev) => [...prev, aiMsg]);
       
-      // Update Reasoning Panel with the "Plan" or "Thought" from the agent
       if (res.data.thought || res.data.plan) {
         setReasoning((prev) => [...prev, {
           id: Date.now().toString(),
@@ -112,7 +132,7 @@ const Meeting = () => {
   };
 
   if (isInitialLoading) {
-    return <div className="min-h-screen pt-32 text-center font-mono animate-pulse">Synchronizing Agent DNA...</div>;
+    return <div className="min-h-screen pt-32 text-center font-mono animate-pulse">Establishing Secure Connection...</div>;
   }
 
   return (
@@ -122,7 +142,7 @@ const Meeting = () => {
         <div className="flex items-center justify-between mb-6">
           <div>
             <div className="flex items-center gap-3 mb-1">
-              <h1 className="font-mono font-bold text-xl md:text-2xl">Meeting Arena #{meetingId?.slice(-4)}</h1>
+              <h1 className="font-mono font-bold text-xl md:text-2xl">Meeting Arena #{meetingId}</h1>
               {isLive && (
                 <span className="inline-flex items-center gap-1.5 rounded-full bg-green-500/10 px-2.5 py-0.5 text-xs font-medium text-green-500 animate-pulse">
                   <Circle className="h-2 w-2 fill-current" /> Live Negotiation
@@ -130,7 +150,8 @@ const Meeting = () => {
               )}
             </div>
             <p className="text-sm text-muted-foreground">
-              {agentData ? `${agentData.name} (${agentData.brain}) vs Human` : "Generic Negotiator"}
+              {agentData ? `${agentData.name} representing Owner` : "Generic Negotiator"} 
+              {meetingData?.goal && <span className="ml-2 border-l pl-2 text-primary font-mono text-[10px]">GOAL: {meetingData.goal}</span>}
             </p>
           </div>
           <div className="flex items-center gap-3">
@@ -156,7 +177,7 @@ const Meeting = () => {
             <div className="flex flex-col gap-4 p-4 overflow-y-auto h-[450px]">
               {messages.length === 0 && (
                 <div className="text-center py-20 text-muted-foreground text-sm italic">
-                  The counterparty is waiting for your opening proposal...
+                  {meetingData?.goal ? `Goal: ${meetingData.goal}. Start the conversation...` : "Waiting for opening proposal..."}
                 </div>
               )}
               {messages.map((msg) => (

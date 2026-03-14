@@ -1,48 +1,52 @@
 import { buildPersonality } from "./personalityEngine.js";
 import { checkDeal } from "./negotiationEngine.js";
-import { getConversation, saveMessage } from "./memoryManager.js";
 import { planResponse } from "./plannerAgent.js";
 import { generateNegotiationReply } from "./negotiatorAgent.js";
 import { validateReply } from "./validatorAgent.js";
 import { validateResponse } from "./responseValidator.js";
 
-export async function runCloneAgent(agentData, meetingId, message) {
-  // 1. Check if message violates the hard boundaries set in the Lab
+// Added 'goal' and 'history' to the parameters
+export async function runCloneAgent(agentData, goal, message, history = []) {
+  
+  // 1. Hard Boundary Check (Lab Rules)
   const dealCheck = checkDeal(message, agentData);
   if (!dealCheck.allowed) {
-    return dealCheck.reply;
+    return {
+      response: dealCheck.reply,
+      thought: "Offer rejected: Message violates safety or price boundaries."
+    };
   }
 
-  // 2. Build the personality from DB rules
+  // 2. Personality & Identity Setup
   const personality = buildPersonality(agentData);
-
-  // 3. Get history
-  const memory = getConversation(meetingId);
-
-  // 4. Pass the specific brain (ollama/gemini) to all agents
   const brainType = agentData.brain;
 
-  const plan = await planResponse(message, memory, brainType);
+  // 3. Strategic Planning
+  // We pass the 'goal' so the planner knows what we're trying to achieve
+  const plan = await planResponse(message, history, brainType, goal);
 
+  // 4. Draft the Negotiation Reply
   const reply = await generateNegotiationReply(
     personality,
     plan,
     message,
-    memory,
-    brainType
+    history,
+    brainType,
+    goal // Added goal here as well
   );
 
+  // 5. Self-Correction / Validation
   const validation = await validateReply(reply, brainType);
   
-  // Final cleanup of AI-isms
   let finalReply = validateResponse(reply);
 
   if (validation !== "VALID" && validation.length > 5) {
     finalReply = validation;
   }
 
-  saveMessage(meetingId, "user", message);
-  saveMessage(meetingId, "assistant", finalReply);
-
-  return finalReply;
+  // Return both the reply and the plan so the UI reasoning panel updates
+  return {
+    response: finalReply,
+    thought: plan 
+  };
 }
