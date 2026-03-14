@@ -1,7 +1,10 @@
-import { runLLM } from "./llmService.js";
 import { buildPersonality } from "./personalityEngine.js";
 import { checkDeal } from "./negotiationEngine.js";
 import { getConversation, saveMessage } from "./memoryManager.js";
+
+import { planResponse } from "./plannerAgent.js";
+import { generateNegotiationReply } from "./negotiationAgent.js";
+import { validateReply } from "./validatorAgent.js";
 import { validateResponse } from "./responseValidator.js";
 
 export async function runCloneAgent(userProfile, meetingId, message) {
@@ -16,18 +19,26 @@ export async function runCloneAgent(userProfile, meetingId, message) {
 
   const memory = getConversation(meetingId);
 
-  const messages = [
-    { role: "system", content: personality },
-    ...memory,
-    { role: "user", content: message }
-  ];
+  const plan = await planResponse(message, memory);
 
-  const reply = await runLLM(messages);
+  const reply = await generateNegotiationReply(
+    personality,
+    plan,
+    message,
+    memory
+  );
 
+  const validation = await validateReply(reply);
   const cleanReply = validateResponse(reply);
 
-  saveMessage(meetingId, "user", message);
-  saveMessage(meetingId, "assistant", cleanReply);
+  let finalReply = reply;
 
-  return cleanReply;
+  if (validation !== "VALID") {
+    finalReply = validation;
+  }
+
+  saveMessage(meetingId, "user", message);
+  saveMessage(meetingId, "assistant", finalReply);
+
+  return finalReply;
 }
