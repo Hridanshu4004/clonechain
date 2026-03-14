@@ -37,10 +37,10 @@ mongod
 **Option B: MongoDB Atlas** (Cloud - recommended)
 1. Go to https://www.mongodb.com/cloud/atlas
 2. Create free account & cluster
-3. Get connection string: `mongodb+srv://user:pass@cluster.mongodb.net/clonechain`
+3. Get connection string: `mongodb+srv://<username>:<password>@<cluster-name>.mongodb.net/clonechain`
 4. Update `.env`:
 ```
-MONGODB_URI=mongodb+srv://user:pass@cluster.mongodb.net/clonechain
+MONGODB_URI=mongodb+srv://<username>:<password>@<cluster-name>.mongodb.net/clonechain
 ```
 
 ### **Step 3: Configure .env**
