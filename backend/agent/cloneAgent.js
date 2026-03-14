@@ -3,7 +3,7 @@ import { checkDeal } from "./negotiationEngine.js";
 import { getConversation, saveMessage } from "./memoryManager.js";
 
 import { planResponse } from "./plannerAgent.js";
-import { generateNegotiationReply } from "./negotiationAgent.js";
+import { generateNegotiationReply } from "./negotiatorAgent.js";
 import { validateReply } from "./validatorAgent.js";
 import { validateResponse } from "./responseValidator.js";
 

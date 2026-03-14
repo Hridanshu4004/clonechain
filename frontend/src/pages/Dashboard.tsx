@@ -3,7 +3,9 @@ import { Button } from "@/components/ui/button";
 import { Plus, Activity, Zap, Bot, FileCheck, Clock } from "lucide-react";
 import { Link } from "react-router-dom";
 import { useWallet } from "@/context/WalletContext";
+import { useAuth } from "@/context/AuthContext";
 import { motion } from "framer-motion";
+import { Navigate } from "react-router-dom";
 
 const mockAgents = [
   { id: 1, name: "NegotiatorX", personality: "Aggressive deal closer. Maximizes token value in every negotiation.", status: "live" as const, iqTokens: 2400, meetingsCount: 12 },
@@ -27,19 +29,35 @@ const recentActivity = [
 ];
 
 const Dashboard = () => {
-  const { isConnected } = useWallet();
+  const { isConnected, shortAddress } = useWallet();
+  const { user, isLoading } = useAuth();
+
+  if (isLoading) return <div className="min-h-screen pt-24 flex items-center justify-center font-mono">Loading Identity...</div>;
+  if (!user) return <Navigate to="/login" />;
 
   if (!isConnected) {
     return (
       <div className="min-h-screen pt-24 flex items-center justify-center">
         <div className="text-center">
+          <div className="mb-6">
+            <h2 className="font-mono font-bold text-xl mb-1 text-primary">Welcome, {user.nickname}</h2>
+            <p className="text-muted-foreground text-xs font-mono uppercase tracking-widest">{user.email}</p>
+          </div>
           <Bot className="h-16 w-16 text-muted-foreground mx-auto mb-4" />
-          <h2 className="font-mono font-bold text-xl mb-2">Connect Your Wallet</h2>
-          <p className="text-muted-foreground">Connect your wallet to access the dashboard.</p>
+          <h2 className="font-mono font-bold text-xl mb-2">Wallet Sync Required</h2>
+          <p className="text-muted-foreground mb-6">Connect your wallet to manage your AI agents.</p>
+          <div className="p-3 bg-secondary rounded-lg border border-border inline-block max-w-xs mx-auto">
+            <p className="text-[10px] text-muted-foreground uppercase font-bold mb-1">Linked Wallet</p>
+            <p className="text-xs font-mono break-all">{user.walletAddress}</p>
+          </div>
         </div>
       </div>
     );
   }
+
+  // Check if current connected address matches user's linked wallet
+  // (Simplified for demo)
+
 
   return (
     <div className="min-h-screen pt-24 pb-16">
@@ -47,7 +65,12 @@ const Dashboard = () => {
         {/* Header */}
         <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 mb-8">
           <div>
-            <h1 className="font-mono font-bold text-2xl md:text-3xl mb-1">Dashboard</h1>
+            <div className="flex items-center gap-2 mb-1">
+              <h1 className="font-mono font-bold text-2xl md:text-3xl">Dashboard</h1>
+              <span className="text-xs bg-primary/10 text-primary border border-primary/20 px-2 py-0.5 rounded-full font-mono">
+                {user.nickname}
+              </span>
+            </div>
             <p className="text-muted-foreground text-sm">Manage your minted AI agents and monitor activity status.</p>
           </div>
           <div className="flex gap-2">

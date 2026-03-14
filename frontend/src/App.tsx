@@ -4,6 +4,7 @@ import { Toaster as Sonner } from "@/components/ui/sonner";
 import { Toaster } from "@/components/ui/toaster";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { WalletProvider } from "@/context/WalletContext";
+import { AuthProvider } from "@/context/AuthContext";
 import { ProfileProvider } from "@/context/ProfileContext";
 import Navbar from "@/components/Navbar";
 import Index from "./pages/Index";
@@ -14,6 +15,8 @@ import InviteHub from "./pages/InviteHub";
 import Meeting from "./pages/Meeting";
 import RequestlyDashboard from "./pages/RequestlyDashboard";
 import AgreementLedger from "./pages/AgreementLedger";
+import Login from "./pages/Login";
+import Register from "./pages/Register";
 import Profile from "./pages/Profile";
 import NotFound from "./pages/NotFound";
 
@@ -26,21 +29,25 @@ const App = () => (
       <Sonner />
       <BrowserRouter>
         <WalletProvider>
-          <ProfileProvider>
-            <Navbar />
-            <Routes>
-              <Route path="/" element={<Index />} />
-              <Route path="/dashboard" element={<Dashboard />} />
-              <Route path="/agent-lab" element={<AgentLab />} />
-              <Route path="/scheduler" element={<MeetingScheduler />} />
-              <Route path="/invite/:id" element={<InviteHub />} />
-              <Route path="/meeting/:id" element={<Meeting />} />
-              <Route path="/requestly" element={<RequestlyDashboard />} />
-              <Route path="/ledger" element={<AgreementLedger />} />
-              <Route path="/profile" element={<Profile />} />
-              <Route path="*" element={<NotFound />} />
-            </Routes>
-          </ProfileProvider>
+          <AuthProvider>
+            <ProfileProvider> {/* Wrap everything that needs Profile data */}
+              <Navbar /> 
+              <Routes>
+                <Route path="/" element={<Index />} />
+                <Route path="/login" element={<Login />} />
+                <Route path="/register" element={<Register />} />
+                <Route path="/dashboard" element={<Dashboard />} />
+                <Route path="/agent-lab" element={<AgentLab />} />
+                <Route path="/scheduler" element={<MeetingScheduler />} />
+                <Route path="/invite/:id" element={<InviteHub />} />
+                <Route path="/meeting/:id" element={<Meeting />} />
+                <Route path="/requestly" element={<RequestlyDashboard />} />
+                <Route path="/ledger" element={<AgreementLedger />} />
+                <Route path="/profile" element={<Profile />} />
+                <Route path="*" element={<NotFound />} />
+              </Routes>
+            </ProfileProvider>
+          </AuthProvider>
         </WalletProvider>
       </BrowserRouter>
     </TooltipProvider>

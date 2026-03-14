@@ -1,7 +1,16 @@
-const express = require("express");
-const cors = require("cors");
+import express from 'express';
+import cors from 'cors';
+import dotenv from 'dotenv';
+import connectDB from './config/db.js';
+import authRoutes from './routes/authRoute.js';
+import agentRoutes from './routes/agentRoute.js';
 
 const app = express();
+dotenv.config();
+
+connectDB();
+
+
 
 app.use(cors());
 app.use(express.json());
@@ -10,27 +19,11 @@ app.get("/", (req, res) => {
   res.send("CloneChain Backend Running 🚀");
 });
 
-app.post("/agent/chat", async (req, res) => {
-  const { message, meetingId } = req.body;
+app.use('/api/auth', authRoutes);
+app.use('/api/agent', agentRoutes);
 
-  try {
-    const response = await fetch("http://localhost:11434/api/generate", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        model: "llama3",
-        prompt: message,
-        stream: false,
-      }),
-    });
+const PORT = process.env.PORT || 5000;
 
-    const data = await response.json();
-    res.json({ reply: data.response });
-  } catch (error) {
-    res.status(500).json({ error: "Ollama not reachable" });
-  }
-});
-
-app.listen(5000, () => {
-  console.log("Server running on port 5000");
+app.listen(PORT, () => {
+  console.log(`Server running on port ${PORT}`);
 });

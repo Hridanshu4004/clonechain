@@ -1,17 +1,27 @@
-const mongoose = require('mongoose');
-const dotenv = require('dotenv');
+import mongoose from 'mongoose';
+import dotenv from 'dotenv';
 
 dotenv.config();
 
 const connectDB = async () => {
   try {
-    const mongoURI = process.env.MONGODB_URI || 'mongodb://localhost:27017/clonechain';
+    const mongoURI = process.env.MONGODB_URI || process.env.MONGO_URI || 'mongodb://localhost:27017/clonechain';
     
     console.log('🔄 Connecting to MongoDB...');
     
-    await mongoose.connect(mongoURI);
+    const conn = await mongoose.connect(mongoURI);
 
     console.log('✓ MongoDB Connected Successfully');
+    
+    // Monitor connection events
+    mongoose.connection.on('error', (err) => {
+      console.error(`🔥 Mongoose connection error: ${err}`);
+    });
+
+    mongoose.connection.on('disconnected', () => {
+      console.warn('⚠️ Mongoose disconnected. Attempting to reconnect...');
+    });
+
     return mongoose.connection;
   } catch (error) {
     console.error('✗ MongoDB Connection Error:', error.message);
@@ -19,4 +29,12 @@ const connectDB = async () => {
   }
 };
 
-module.exports = connectDB;
+export default connectDB;
+process.on('SIGINT', async () => {
+  await mongoose.connection.close();
+  console.log('🛑 MongoDB connection closed due to app termination');
+  process.exit(0);
+});
+
+export default connectDB;
+>>>>>>> bcf424301fcb684c11b13eb565b06661c2559ba7

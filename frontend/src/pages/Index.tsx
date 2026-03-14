@@ -3,6 +3,8 @@ import { Button } from "@/components/ui/button";
 import { Zap, Bot, Shield, ArrowRight, GitBranch, MessageSquare, Lock, Brain, FileCheck, Activity, DollarSign } from "lucide-react";
 import { motion } from "framer-motion";
 import { useWallet } from "@/context/WalletContext";
+import { useAuth } from "@/context/AuthContext";
+import { Navigate } from "react-router-dom";
 
 const features = [
   {
@@ -43,6 +45,9 @@ const fadeUp = {
 
 const LandingPage = () => {
   const { isConnected, connectWallet } = useWallet();
+  const { user } = useAuth();
+
+  if (user) return <Navigate to="/dashboard" />;
 
   return (
     <div className="min-h-screen">
