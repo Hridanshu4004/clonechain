@@ -1,7 +1,8 @@
-const express = require('express');
+import express from 'express';
+import Meeting from '../models/Meeting.js';
+import { executeOnBlockchainSafe } from '../utils/blockchainExecutor.js';
+
 const router = express.Router();
-const Meeting = require('../models/Meeting');
-const { executeOnBlockchainSafe } = require('../utils/blockchainExecutor');
 
 // ================================
 // CREATE A NEW MEETING
@@ -329,4 +330,4 @@ router.get('/ledger/agreements', async (req, res) => {
   }
 });
 
-module.exports = router;
+export default router;

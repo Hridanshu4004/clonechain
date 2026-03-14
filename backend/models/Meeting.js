@@ -1,4 +1,4 @@
-const mongoose = require('mongoose');
+import mongoose from 'mongoose';
 
 const MeetingSchema = new mongoose.Schema({
   // ================================
@@ -154,4 +154,4 @@ MeetingSchema.index({ 'participants.initiatorUser': 1 });
 MeetingSchema.index({ status: 1, createdAt: -1 });
 MeetingSchema.index({ 'result.onChainExecution.txHash': 1 });
 
-module.exports = mongoose.model('Meeting', MeetingSchema);
+export default mongoose.model('Meeting', MeetingSchema);

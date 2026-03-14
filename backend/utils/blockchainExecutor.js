@@ -1,5 +1,5 @@
-const { ethers } = require('ethers');
-const dotenv = require('dotenv');
+import { ethers } from 'ethers';
+import dotenv from 'dotenv';
 
 dotenv.config();
 
@@ -131,7 +131,7 @@ const executeOnBlockchainSafe = async (data) => {
   }
 };
 
-module.exports = {
+export {
   executeOnBlockchain,
   storeAgreementLocal,
   executeOnBlockchainSafe
