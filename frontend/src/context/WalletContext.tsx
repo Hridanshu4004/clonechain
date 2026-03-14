@@ -58,9 +58,13 @@ export const WalletProvider = ({ children }: { children: ReactNode }) => {
     setIsConnecting(true);
     try {
       const accounts = await window.ethereum.request({ method: "eth_requestAccounts" });
-      setAddress(accounts[0]);
-    } catch (error) {
-      console.error("User rejected connection", error);
+      if (accounts && accounts.length > 0) {
+        setAddress(accounts[0]);
+        console.log("✓ Wallet connected:", accounts[0]);
+      }
+    } catch (error: any) {
+      console.error("Connection error:", error);
+      alert(`Failed to connect: ${error.message || "Unknown error"}`);
     } finally {
       setIsConnecting(false);
     }
