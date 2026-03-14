@@ -40,7 +40,7 @@ const App = () => (
                 <Route path="/agent-lab" element={<AgentLab />} />
                 <Route path="/scheduler" element={<MeetingScheduler />} />
                 <Route path="/invite/:id" element={<InviteHub />} />
-                <Route path="/meeting/:id" element={<Meeting />} />
+                <Route path="/arena/:id" element={<Meeting />} />
                 <Route path="/requestly" element={<RequestlyDashboard />} />
                 <Route path="/ledger" element={<AgreementLedger />} />
                 <Route path="/profile" element={<Profile />} />
