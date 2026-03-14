@@ -6,11 +6,12 @@ import authRoutes from './routes/authRoute.js';
 import agentRoutes from './routes/agentRoute.js';
 import meetingRoutes from './routes/meetingRoute.js';
 
+dotenv.config();
+connectDB();
+
 
 const app = express();
-dotenv.config();
 
-connectDB();
 
 
 
@@ -21,6 +22,16 @@ app.get("/", (req, res) => {
   res.send("CloneChain Backend Running 🚀");
 });
 
+
+
+app.use((req, res, next) => {
+  console.log("---------------------------------------");
+  console.log(`[${new Date().toLocaleTimeString()}] REQ: ${req.method} ${req.originalUrl}`);
+  console.log("Body:", req.body);
+  console.log("Params:", req.params);
+  console.log("---------------------------------------");
+  next();
+});
 
 //routes
 app.use('/api/auth', authRoutes);

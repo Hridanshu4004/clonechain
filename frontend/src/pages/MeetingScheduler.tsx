@@ -43,30 +43,37 @@ const MeetingScheduler = () => {
   const update = (key: string, value: string) => setForm((f) => ({ ...f, [key]: value }));
 
   const handleSend = async () => {
-    if (!form.counterpartyEmail || !form.goal || !form.selectedAgentId) {
-      return toast.error("Please fill all required fields");
-    }
+  if (!form.counterpartyEmail || !form.goal || !form.selectedAgentId) {
+    return toast.error("Please fill all required fields");
+  }
 
-    setSending(true);
-    try {
-      // 1. Initialize the meeting room in the backend via your new controller logic
-      const res = await axios.get(`http://localhost:5000/api/meeting/init/${form.selectedAgentId}`);
-      
-      // 2. Construct the live meeting link
-      // This uses the roomId returned by your meetingController.js
-      const link = `${window.location.origin}/arena/${res.data.roomId}?agentId=${form.selectedAgentId}`;
-      setShareLink(link);
+  setSending(true);
+  try {
+    // 1. MUST BE axios.post
+    // 2. MUST include the data object as the second argument
+    
+    const res = await axios.post(`http://localhost:5000/api/meeting/init/${form.selectedAgentId}`, {
+      counterpartyEmail: form.counterpartyEmail,
+      goal: form.goal,
+      ownerAddress: address, // From your useWallet() hook
+      notes: form.notes
+    });
 
-      setSent(true);
-      toast.success("Meeting room generated successfully!");
-    } catch (err) {
-      console.error("Init meeting error:", err);
-      toast.error("Failed to initialize meeting room");
-    } finally {
-      setSending(false);
-    }
-  };
+    
+    
+    // Construct the live meeting link using the roomId from the response
+    const link = `${window.location.origin}/arena/${res.data.roomId}?agentId=${form.selectedAgentId}`;
+    setShareLink(link);
 
+    setSent(true);
+    toast.success("Meeting room generated successfully!");
+  } catch (err) {
+    console.error("Init meeting error:", err);
+    toast.error("Failed to initialize meeting room. Check if backend is running.");
+  } finally {
+    setSending(false);
+  }
+};
   const copyToClipboard = () => {
     navigator.clipboard.writeText(shareLink);
     toast.info("Link copied to clipboard");
