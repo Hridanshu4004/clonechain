@@ -6,22 +6,20 @@ export async function generateNegotiationReply(personality, plan, message, memor
     {
       role: "system",
       content: `
-You are an AI clone representing the user.
+You are negotiating on behalf of the user.
 
-Follow this personality:
+Personality:
 ${personality}
 
-Negotiation strategy:
+Strategy:
 ${plan}
 
-Respond naturally as the user would.
+Respond naturally as the user.
 `
     },
     ...memory,
     { role: "user", content: message }
   ];
 
-  const reply = await runLLM(messages);
-
-  return reply;
+  return await runLLM(messages)
 }

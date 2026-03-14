@@ -1,33 +1,44 @@
-// import { runLLM } from "./llmService.js";
-// import { buildPersonality } from "./personalityEngine.js";
-// import { checkDeal } from "./negotiationEngine.js";
-// import { getConversation, saveMessage } from "./memoryManager.js";
-// import { validateResponse } from "./responseValidator.js";
+import { buildPersonality } from "./personalityEngine.js";
+import { checkDeal } from "./negotiationEngine.js";
+import { getConversation, saveMessage } from "./memoryManager.js";
 
-// export async function runCloneAgent(userProfile, meetingId, message) {
+import { planResponse } from "./plannerAgent.js";
+import { generateNegotiationReply } from "./negotiatorAgent.js";
+import { validateReply } from "./validatorAgent.js";
+import { validateResponse } from "./responseValidator.js";
 
-//   const dealCheck = checkDeal(message, userProfile);
+export async function runCloneAgent(userProfile, meetingId, message) {
 
-//   if (!dealCheck.allowed) {
-//     return dealCheck.reply;
-//   }
+  const dealCheck = checkDeal(message, userProfile);
 
-//   const personality = buildPersonality(userProfile);
+  if (!dealCheck.allowed) {
+    return dealCheck.reply;
+  }
 
-//   const memory = getConversation(meetingId);
+  const personality = buildPersonality(userProfile);
 
-//   const messages = [
-//     { role: "system", content: personality },
-//     ...memory,
-//     { role: "user", content: message }
-//   ];
+  const memory = getConversation(meetingId);
 
-//   const reply = await runLLM(messages);
+  const plan = await planResponse(message, memory);
 
-//   const cleanReply = validateResponse(reply);
+  const reply = await generateNegotiationReply(
+    personality,
+    plan,
+    message,
+    memory
+  );
 
-//   saveMessage(meetingId, "user", message);
-//   saveMessage(meetingId, "assistant", cleanReply);
+  const validation = await validateReply(reply);
+  const cleanReply = validateResponse(reply);
 
-//   return cleanReply;
-// }
+  let finalReply = reply;
+
+  if (validation !== "VALID") {
+    finalReply = validation;
+  }
+
+  saveMessage(meetingId, "user", message);
+  saveMessage(meetingId, "assistant", finalReply);
+
+  return finalReply;
+}

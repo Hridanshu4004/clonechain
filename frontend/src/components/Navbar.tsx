@@ -5,6 +5,7 @@ import { Wallet, Menu, X, Zap, LayoutDashboard, FlaskConical, CalendarClock, Act
 import { Button } from "@/components/ui/button";
 import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
+import ProfileMenu from "@/components/ProfileMenu";
 
 const navLinks = [
   { to: "/dashboard", label: "Dashboard", icon: LayoutDashboard },
@@ -85,6 +86,7 @@ const Navbar = () => {
               {isConnecting ? "..." : "Link Wallet"}
             </Button>
           )}
+          <ProfileMenu onDisconnect={disconnectWallet} />
 
           <button className="lg:hidden text-muted-foreground hover:text-foreground pl-2" onClick={() => setMobileOpen(!mobileOpen)}>
             {mobileOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
