@@ -1,3 +1,4 @@
+import { useState, useEffect } from "react"; // Added hooks
 import AgentCard from "@/components/agents/AgentCard";
 import { Button } from "@/components/ui/button";
 import { Plus, Activity, Zap, Bot, FileCheck, Clock } from "lucide-react";
@@ -6,33 +7,51 @@ import { useWallet } from "@/context/WalletContext";
 import { useAuth } from "@/context/AuthContext";
 import { motion } from "framer-motion";
 import { Navigate } from "react-router-dom";
-
-const mockAgents = [
-  { id: 1, name: "NegotiatorX", personality: "Aggressive deal closer. Maximizes token value in every negotiation.", status: "live" as const, iqTokens: 2400, meetingsCount: 12 },
-  { id: 2, name: "DiplomatAI", personality: "Balanced mediator that seeks win-win outcomes for both parties.", status: "idle" as const, iqTokens: 1800, meetingsCount: 8 },
-  { id: 3, name: "SharkBot", personality: "Hard-nosed trader. Will walk away from bad deals without hesitation.", status: "completed" as const, iqTokens: 3100, meetingsCount: 23 },
-  { id: 4, name: "ConsensusPrime", personality: "Collaborative AI focused on building long-term partnerships.", status: "idle" as const, iqTokens: 950, meetingsCount: 4 },
-];
-
-const stats = [
-  { label: "Minted Agents", value: "4", icon: Bot },
-  { label: "Live Meetings", value: "1", icon: Activity },
-  { label: "Total IQ Staked", value: "8,250", icon: Zap },
-  { label: "Agreements Finalized", value: "7", icon: FileCheck },
-];
+import axios from "axios"; // Added axios
+import { toast } from "sonner";
 
 const recentActivity = [
-  { time: "2 min ago", text: "NegotiatorX entered Meeting #12 with DiplomatAI", type: "live" },
-  { time: "1 hr ago", text: "SharkBot finalized Agreement #23 — TX: 0x8a3f...c2e1", type: "success" },
-  { time: "3 hrs ago", text: "ConsensusPrime minted with 950 IQ staked", type: "mint" },
+  { time: "Just now", text: "System synchronized with Lab", type: "success" },
+  { time: "2 min ago", text: "NegotiatorX entered Meeting #12", type: "live" },
   { time: "Yesterday", text: "Meeting invitation sent to partner@example.com", type: "invite" },
 ];
 
 const Dashboard = () => {
-  const { isConnected, shortAddress } = useWallet();
-  const { user, isLoading } = useAuth();
+  const { isConnected, address } = useWallet(); // Use 'address' for API calls
+  const { user, isLoading: authLoading } = useAuth();
+  
+  // --- NEW STATE FOR REAL DATA ---
+  const [agents, setAgents] = useState<any[]>([]);
+  const [isFetching, setIsFetching] = useState(true);
 
-  if (isLoading) return <div className="min-h-screen pt-24 flex items-center justify-center font-mono">Loading Identity...</div>;
+  useEffect(() => {
+    const fetchMyAgents = async () => {
+      if (!isConnected || !address) return;
+      try {
+        const res = await axios.get(`http://localhost:5000/api/agents/owner/${address}`);
+        setAgents(res.data);
+      } catch (err) {
+        console.error("Failed to fetch agents", err);
+        toast.error("Could not sync agents from Lab");
+      } finally {
+        setIsFetching(false);
+      }
+    };
+
+    fetchMyAgents();
+  }, [isConnected, address]);
+
+  // --- DYNAMIC STATS CALCULATION ---
+  const totalStaked = agents.reduce((acc, curr) => acc + (Number(curr.iqStake) || 0), 0);
+  
+  const stats = [
+    { label: "Minted Agents", value: agents.length.toString(), icon: Bot },
+    { label: "Live Meetings", value: "1", icon: Activity },
+    { label: "Total IQ Staked", value: totalStaked.toLocaleString(), icon: Zap },
+    { label: "Agreements Finalized", value: "0", icon: FileCheck },
+  ];
+
+  if (authLoading) return <div className="min-h-screen pt-24 flex items-center justify-center font-mono">Loading Identity...</div>;
   if (!user) return <Navigate to="/login" />;
 
   if (!isConnected) {
@@ -54,10 +73,6 @@ const Dashboard = () => {
       </div>
     );
   }
-
-  // Check if current connected address matches user's linked wallet
-  // (Simplified for demo)
-
 
   return (
     <div className="min-h-screen pt-24 pb-16">
@@ -116,11 +131,30 @@ const Dashboard = () => {
           {/* Agents Grid */}
           <div className="lg:col-span-2">
             <h2 className="font-mono font-semibold text-lg mb-4">Your Agents</h2>
-            <div className="grid sm:grid-cols-2 gap-4">
-              {mockAgents.map((agent) => (
-                <AgentCard key={agent.id} {...agent} />
-              ))}
-            </div>
+            {isFetching ? (
+              <div className="font-mono text-sm animate-pulse">Scanning blockchain for agents...</div>
+            ) : agents.length > 0 ? (
+              <div className="grid sm:grid-cols-2 gap-4">
+                {agents.map((agent) => (
+                  <AgentCard 
+                    key={agent._id} 
+                    id={agent._id}
+                    name={agent.name}
+                    personality={agent.customRules} // Mapping rule summary to card
+                    status="live"
+                    iqTokens={agent.iqStake}
+                    meetingsCount={0}
+                  />
+                ))}
+              </div>
+            ) : (
+              <div className="p-8 border border-dashed rounded-lg text-center">
+                <p className="text-muted-foreground font-mono text-sm mb-4">No agents synthesized yet.</p>
+                <Button asChild variant="secondary" size="sm">
+                  <Link to="/agent-lab">Go to Lab</Link>
+                </Button>
+              </div>
+            )}
           </div>
 
           {/* Activity Feed */}

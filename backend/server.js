@@ -4,6 +4,8 @@ import dotenv from 'dotenv';
 import connectDB from './config/db.js';
 import authRoutes from './routes/authRoute.js';
 import agentRoutes from './routes/agentRoute.js';
+import meetingRoutes from './routes/meetingRoute.js';
+
 
 const app = express();
 dotenv.config();
@@ -19,8 +21,15 @@ app.get("/", (req, res) => {
   res.send("CloneChain Backend Running 🚀");
 });
 
+
+//routes
 app.use('/api/auth', authRoutes);
-app.use('/api/agent', agentRoutes);
+app.use('/api/agents', agentRoutes);
+app.use('/api/meeting', meetingRoutes);
+
+
+// app.use(notFound);
+// app.use(errorHandler);
 
 const PORT = process.env.PORT || 5000;
 

@@ -9,6 +9,7 @@ import { Bot, ArrowRight, ArrowLeft, Zap, Check, Brain, Shield, FlaskConical } f
 import { motion, AnimatePresence } from "framer-motion";
 import { useNavigate } from "react-router-dom";
 import { toast } from "sonner";
+import axios from "axios"; // Added axios for API calls
 
 const steps = ["Identity", "Rules & Boundaries", "Decision Logic", "Review & Mint"];
 
@@ -18,10 +19,12 @@ const brainOptions = [
 ];
 
 const AgentLab = () => {
-  const { isConnected } = useWallet();
-  const { mintAgent, isLoading } = useContract();
+  const { isConnected, address } = useWallet(); // Get address to link ownership
+  const { mintAgent, isLoading: isMintingOnChain } = useContract();
   const navigate = useNavigate();
   const [step, setStep] = useState(0);
+  const [isSavingToDb, setIsSavingToDb] = useState(false); // Track backend save status
+  
   const [form, setForm] = useState({
     name: "",
     lowerBoundary: "",
@@ -34,18 +37,46 @@ const AgentLab = () => {
 
   const update = (key: string, value: string) => setForm((f) => ({ ...f, [key]: value }));
 
+  // --- UPDATED HANDLER ---
   const handleSubmit = async () => {
     if (!isConnected) return toast.error("Connect your wallet first");
+    
     try {
-      // For now, we combine the boundaries and rules into a system prompt for the contract
-      const combinedRules = `Lower Boundary: ${form.lowerBoundary}\nUpper Boundary: ${form.upperBoundary}\nCustom Rules: ${form.customRules}`;
-      const result = await mintAgent(form.name, combinedRules);
-      toast.success(`Agent minted as IQ AI Token! TX: ${result.txHash.slice(0, 10)}...`);
+      // 1. MINT ON SMART CONTRACT
+      // We still pass name and combined rules to the blockchain for transparency
+      const combinedRules = `Lower: ${form.lowerBoundary} | Upper: ${form.upperBoundary} | Rules: ${form.customRules}`;
+      const contractResult = await mintAgent(form.name, combinedRules);
+      
+      toast.info("On-chain minting successful! Saving DNA to Lab...");
+      setIsSavingToDb(true);
+
+      // 2. SAVE CONFIGURATION TO BACKEND (MongoDB)
+      // This allows our Node.js multi-agent system to read the rules
+      const agentPayload = {
+        name: form.name,
+        ownerAddress: address,
+        iqStake: form.iqStake,
+        brain: form.brain,
+        lowerBoundary: form.lowerBoundary,
+        upperBoundary: form.upperBoundary,
+        customRules: form.customRules,
+        decisionLogic: form.decisionLogic,
+        txHash: contractResult.txHash // Link DB record to Blockchain TX
+      };
+
+      await axios.post("http://localhost:5000/api/agents/mint", agentPayload);
+
+      toast.success(`Agent ${form.name} is now live and synthesized!`);
       navigate("/dashboard");
-    } catch {
-      toast.error("Failed to mint agent");
+    } catch (error) {
+      console.error("Minting Error:", error);
+      toast.error("Synthesis failed. Check console for details.");
+    } finally {
+      setIsSavingToDb(false);
     }
   };
+
+  const isLoading = isMintingOnChain || isSavingToDb;
 
   if (!isConnected) {
     return (
@@ -204,7 +235,7 @@ const AgentLab = () => {
           </AnimatePresence>
 
           <div className="flex items-center justify-between mt-8">
-            <Button variant="outline" onClick={() => setStep((s) => s - 1)} disabled={step === 0}>
+            <Button variant="outline" onClick={() => setStep((s) => s - 1)} disabled={step === 0 || isLoading}>
               <ArrowLeft className="mr-2 h-4 w-4" /> Back
             </Button>
             {step < 3 ? (
@@ -213,7 +244,7 @@ const AgentLab = () => {
               </Button>
             ) : (
               <Button onClick={handleSubmit} disabled={isLoading} className="gradient-primary-bg text-primary-foreground glow-primary">
-                {isLoading ? "Minting..." : "Mint Agent"} <Zap className="ml-2 h-4 w-4" />
+                {isLoading ? (isSavingToDb ? "Saving DNA..." : "Minting...") : "Mint Agent"} <Zap className="ml-2 h-4 w-4" />
               </Button>
             )}
           </div>

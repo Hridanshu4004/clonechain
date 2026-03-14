@@ -5,37 +5,20 @@ import { Label } from "@/components/ui/label";
 import { useAuth } from "@/context/AuthContext";
 import { useWallet } from "@/context/WalletContext";
 import { Link } from "react-router-dom";
-import { CheckCircle2, XCircle, ShieldCheck, Mail, Lock, Zap } from "lucide-react";
-import { toast } from "sonner";
+import { CheckCircle2, ShieldCheck, Mail, Lock, Zap } from "lucide-react";
 
 const Login = () => {
   const { login } = useAuth();
-  const { address, isConnected } = useWallet();
+  const { isConnected } = useWallet();
   const [formData, setFormData] = useState({ email: "", password: "" });
   const [isLoading, setIsLoading] = useState(false);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsLoading(true);
-    try {
-      const response = await fetch("http://localhost:5000/api/auth/login", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(formData),
-      });
-
-      const data = await response.json();
-
-      if (response.ok) {
-        login(data);
-      } else {
-        toast.error(data.message || "Login failed");
-      }
-    } catch (error) {
-      toast.error("Server error during login");
-    } finally {
-      setIsLoading(false);
-    }
+    // login function now handles the fetch, toast, and navigation internally
+    await login(formData.email, formData.password);
+    setIsLoading(false);
   };
 
   return (
@@ -80,7 +63,6 @@ const Login = () => {
               </div>
             </div>
 
-            {/* Wallet Sync Check Indicator */}
             <div className="pt-2">
               <div className={`flex items-center justify-between p-3 rounded-lg border text-xs font-mono transition-all ${
                 isConnected ? "bg-primary/5 border-primary/20" : "bg-secondary/50 border-border"

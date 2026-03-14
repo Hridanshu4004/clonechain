@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
@@ -16,17 +16,28 @@ const Register = () => {
   const { address, isConnected, connectWallet } = useWallet();
   const { register } = useAuth();
   const [step, setStep] = useState(0);
+  const [isLoading, setIsLoading] = useState(false);
+
+  // Synced exactly with Backend Schema
   const [formData, setFormData] = useState({
     nickname: "",
     email: "",
     password: "",
     occupation: "",
-    walletAddress: address || "",
+    walletAddress: "",
     customInstructions: "",
-    behavioralPreference: "Proactive",
-    styleTone: "Formal",
-    interestsValues: "",
+    behaviorPreferences: "Proactive", // Matches Schema
+    stylePreferences: "Formal",      // Matches Schema
+    tonePreferences: "Professional",  // Matches Schema
+    interestsAndValues: "",           // Matches Schema
   });
+
+  // Keep wallet address in sync if it changes
+  useEffect(() => {
+    if (address) {
+      update("walletAddress", address);
+    }
+  }, [address]);
 
   const update = (key: string, value: string) => setFormData((f) => ({ ...f, [key]: value }));
 
@@ -34,17 +45,19 @@ const Register = () => {
   const handleBack = () => setStep((s) => s - 1);
 
   const handleSubmit = async () => {
-    // Ensure wallet address is updated if it was connected late
+    setIsLoading(true);
+    // Final check to ensure address is included
     const finalData = { ...formData, walletAddress: address || formData.walletAddress };
     await register(finalData);
+    setIsLoading(false);
   };
 
   return (
     <div className="min-h-screen pt-24 pb-16 flex items-center justify-center">
       <div className="container max-w-lg px-4">
         <div className="text-center mb-8">
-          <h1 className="font-mono font-bold text-3xl mb-2">Create Your Persona</h1>
-          <p className="text-muted-foreground text-sm">Set up your Master Personality for CloneChain.</p>
+          <h1 className="font-mono font-bold text-3xl mb-2">Initialize Persona</h1>
+          <p className="text-muted-foreground text-sm">Step {step + 1}: Configure your Digital Twin.</p>
         </div>
 
         {/* Step indicator */}
@@ -52,7 +65,7 @@ const Register = () => {
           {steps.map((s, i) => (
             <div key={s} className="flex flex-col items-center gap-2">
               <div className={`flex h-8 w-8 items-center justify-center rounded-full text-xs font-mono font-bold transition-colors ${
-                i <= step ? "gradient-primary-bg text-primary-foreground" : "bg-secondary text-muted-foreground"
+                i <= step ? "gradient-primary-bg text-primary-foreground shadow-[0_0_15px_rgba(var(--primary),0.5)]" : "bg-secondary text-muted-foreground"
               }`}>
                 {i < step ? <Check className="h-4 w-4" /> : i + 1}
               </div>
@@ -61,7 +74,9 @@ const Register = () => {
           ))}
         </div>
 
-        <div className="rounded-xl border border-border bg-card p-8 shadow-xl glow-border">
+        <div className="rounded-xl border border-border bg-card p-8 shadow-xl relative overflow-hidden">
+          <div className="absolute top-0 left-0 w-full h-1 gradient-primary-bg" />
+          
           <AnimatePresence mode="wait">
             {step === 0 && (
               <motion.div key="s0" initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -20 }} className="space-y-4">
@@ -71,7 +86,7 @@ const Register = () => {
                 
                 <div>
                   <Label className="text-xs uppercase tracking-widest text-muted-foreground mb-1.5 block">Nickname</Label>
-                  <Input value={formData.nickname} onChange={(e) => update("nickname", e.target.value)} placeholder="How the AI refers to you" className="font-mono" />
+                  <Input value={formData.nickname} onChange={(e) => update("nickname", e.target.value)} placeholder="e.g. Satoshi_Clone" className="font-mono" />
                 </div>
 
                 <div>
@@ -86,19 +101,22 @@ const Register = () => {
 
                 <div>
                   <Label className="text-xs uppercase tracking-widest text-muted-foreground mb-1.5 block">Occupation</Label>
-                  <Input value={formData.occupation} onChange={(e) => update("occupation", e.target.value)} placeholder="e.g. Startup Founder, Developer" className="font-mono" />
+                  <Input value={formData.occupation} onChange={(e) => update("occupation", e.target.value)} placeholder="e.g. Developer, Analyst" className="font-mono" />
                 </div>
 
                 <div className="pt-2">
-                  <Label className="text-xs uppercase tracking-widest text-muted-foreground mb-1.5 block">Wallet Link</Label>
+                  <Label className="text-xs uppercase tracking-widest text-muted-foreground mb-1.5 block">Wallet Identity</Label>
                   {isConnected ? (
-                    <div className="flex items-center gap-2 p-3 rounded-lg bg-secondary/50 border border-primary/20">
-                      <Shield className="h-4 w-4 text-primary" />
-                      <span className="text-xs font-mono truncate">{address}</span>
+                    <div className="flex items-center justify-between p-3 rounded-lg bg-primary/5 border border-primary/20">
+                      <div className="flex items-center gap-2 overflow-hidden">
+                        <Shield className="h-4 w-4 text-primary flex-shrink-0" />
+                        <span className="text-[10px] font-mono truncate">{address}</span>
+                      </div>
+                      <Check className="h-4 w-4 text-green-500 flex-shrink-0" />
                     </div>
                   ) : (
                     <Button onClick={connectWallet} variant="outline" className="w-full border-dashed border-primary/40 hover:bg-primary/5 text-primary">
-                      <Zap className="h-4 w-4 mr-2" /> Connect Wallet to Link Identity
+                      <Zap className="h-4 w-4 mr-2" /> Connect Wallet to Register
                     </Button>
                   )}
                 </div>
@@ -116,21 +134,22 @@ const Register = () => {
                   <Textarea 
                     value={formData.customInstructions} 
                     onChange={(e) => update("customInstructions", e.target.value)} 
-                    placeholder="General rules for how the AI should process info..." 
+                    placeholder="E.g. Always prioritize speed, never use jargon..." 
                     rows={4} 
-                    className="font-mono" 
+                    className="font-mono text-sm" 
                   />
                 </div>
 
                 <div>
                   <Label className="text-xs uppercase tracking-widest text-muted-foreground mb-1.5 block">Behavioral Preference</Label>
-                  <Select value={formData.behavioralPreference} onValueChange={(v) => update("behavioralPreference", v)}>
+                  <Select value={formData.behaviorPreferences} onValueChange={(v) => update("behaviorPreferences", v)}>
                     <SelectTrigger className="font-mono">
                       <SelectValue placeholder="Select behavior" />
                     </SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="Proactive">Proactive (Self-starting)</SelectItem>
-                      <SelectItem value="Reactive">Reactive (Follows lead)</SelectItem>
+                      <SelectItem value="Proactive">Proactive (Takes initiative)</SelectItem>
+                      <SelectItem value="Reactive">Reactive (Waits for prompt)</SelectItem>
+                      <SelectItem value="Collaborative">Collaborative (Asks questions)</SelectItem>
                     </SelectContent>
                   </Select>
                 </div>
@@ -143,59 +162,76 @@ const Register = () => {
                   <MessageSquare className="h-4 w-4" /> Step 3: Communication Style
                 </div>
 
-                <div>
-                  <Label className="text-xs uppercase tracking-widest text-muted-foreground mb-1.5 block">Style & Tone</Label>
-                  <Select value={formData.styleTone} onValueChange={(v) => update("styleTone", v)}>
-                    <SelectTrigger className="font-mono">
-                      <SelectValue placeholder="Select tone" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="Formal">Formal & Professional</SelectItem>
-                      <SelectItem value="Casual">Casual & Friendly</SelectItem>
-                      <SelectItem value="Humorous">Humorous & Witty</SelectItem>
-                    </SelectContent>
-                  </Select>
+                <div className="grid grid-cols-2 gap-4">
+                  <div>
+                    <Label className="text-xs uppercase tracking-widest text-muted-foreground mb-1.5 block">Style</Label>
+                    <Select value={formData.stylePreferences} onValueChange={(v) => update("stylePreferences", v)}>
+                      <SelectTrigger className="font-mono text-xs">
+                        <SelectValue placeholder="Style" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="Formal">Formal</SelectItem>
+                        <SelectItem value="Casual">Casual</SelectItem>
+                        <SelectItem value="Technical">Technical</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
+                  <div>
+                    <Label className="text-xs uppercase tracking-widest text-muted-foreground mb-1.5 block">Tone</Label>
+                    <Select value={formData.tonePreferences} onValueChange={(v) => update("tonePreferences", v)}>
+                      <SelectTrigger className="font-mono text-xs">
+                        <SelectValue placeholder="Tone" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="Professional">Professional</SelectItem>
+                        <SelectItem value="Witty">Witty</SelectItem>
+                        <SelectItem value="Direct">Direct</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
                 </div>
 
                 <div>
                   <Label className="text-xs uppercase tracking-widest text-muted-foreground mb-1.5 block">Interests & Values</Label>
                   <Textarea 
-                    value={formData.interestsValues} 
-                    onChange={(e) => update("interestsValues", e.target.value)} 
-                    placeholder="Describe your moral compass and core values..." 
-                    rows={6} 
-                    className="font-mono" 
+                    value={formData.interestsAndValues} 
+                    onChange={(e) => update("interestsAndValues", e.target.value)} 
+                    placeholder="E.g. Open source, Decentralization, High-security..." 
+                    rows={4} 
+                    className="font-mono text-sm" 
                   />
-                </div>
-
-                <div className="pt-2 rounded-lg bg-primary/5 p-4 border border-primary/20">
-                  <p className="text-[10px] text-muted-foreground text-center uppercase tracking-tighter italic">
-                    By clicking Register, you bake these traits into your Master Identity.
-                  </p>
                 </div>
               </motion.div>
             )}
           </AnimatePresence>
 
           <div className="flex items-center justify-between mt-8">
-            <Button variant="ghost" onClick={handleBack} disabled={step === 0} className="font-mono text-xs">
+            <Button variant="ghost" onClick={handleBack} disabled={step === 0 || isLoading} className="font-mono text-xs">
               <ArrowLeft className="mr-2 h-3 w-3" /> Back
             </Button>
             
             {step < 2 ? (
-              <Button onClick={handleNext} disabled={step === 0 && (!formData.nickname || !formData.email || !formData.password || !isConnected)} className="gradient-primary-bg text-primary-foreground font-bold px-6">
+              <Button 
+                onClick={handleNext} 
+                disabled={step === 0 && (!formData.nickname || !formData.email || !formData.password || !isConnected)} 
+                className="gradient-primary-bg text-primary-foreground font-bold px-6 shadow-lg hover:shadow-primary/20"
+              >
                 Next <ArrowRight className="ml-2 h-4 w-4" />
               </Button>
             ) : (
-              <Button onClick={handleSubmit} className="gradient-primary-bg text-primary-foreground font-bold px-8 glow-primary">
-                Complete Onboarding <Zap className="ml-2 h-4 w-4" />
+              <Button 
+                onClick={handleSubmit} 
+                disabled={isLoading}
+                className="gradient-primary-bg text-primary-foreground font-bold px-8 glow-primary"
+              >
+                {isLoading ? "Syncing..." : "Finalize Identity"} <Zap className="ml-2 h-4 w-4" />
               </Button>
             )}
           </div>
         </div>
 
         <p className="text-center mt-6 text-sm text-muted-foreground">
-          Already have an account? <Link to="/login" className="text-primary hover:underline underline-offset-4">Sign In</Link>
+          Already synced? <Link to="/login" className="text-primary hover:underline underline-offset-4">Log In</Link>
         </p>
       </div>
     </div>

@@ -1,6 +1,6 @@
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
-import { Zap, Bot, Shield, ArrowRight, GitBranch, MessageSquare, Lock, Brain, FileCheck, Activity, DollarSign } from "lucide-react";
+import { Zap, Bot, Shield, ArrowRight, GitBranch, MessageSquare, Brain, Activity, DollarSign } from "lucide-react";
 import { motion } from "framer-motion";
 import { useWallet } from "@/context/WalletContext";
 import { useAuth } from "@/context/AuthContext";
@@ -47,6 +47,7 @@ const LandingPage = () => {
   const { isConnected, connectWallet } = useWallet();
   const { user } = useAuth();
 
+  // If already logged in, skip the landing page entirely
   if (user) return <Navigate to="/dashboard" />;
 
   return (
@@ -74,9 +75,10 @@ const LandingPage = () => {
             </p>
 
             <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
+              {/* Wallet Logic */}
               {isConnected ? (
                 <Button asChild size="lg" className="gradient-primary-bg text-primary-foreground font-semibold glow-primary text-base px-8">
-                  <Link to="/dashboard">
+                  <Link to="/login">
                     Launch App
                     <ArrowRight className="ml-2 h-4 w-4" />
                   </Link>
@@ -87,8 +89,10 @@ const LandingPage = () => {
                   <ArrowRight className="ml-2 h-4 w-4" />
                 </Button>
               )}
+
+              {/* Create Agent: Always goes to login if user is not authenticated */}
               <Button asChild variant="outline" size="lg" className="glow-border text-base px-8">
-                <Link to="/agent-lab">
+                <Link to="/login">
                   <GitBranch className="mr-2 h-4 w-4" />
                   Create Agent
                 </Link>
@@ -98,7 +102,7 @@ const LandingPage = () => {
         </div>
       </section>
 
-      {/* How It Works */}
+      {/* Features Section */}
       <section className="py-20 md:py-32 border-t border-border">
         <div className="container mx-auto px-4">
           <div className="text-center mb-16">
@@ -132,60 +136,7 @@ const LandingPage = () => {
         </div>
       </section>
 
-      {/* Cost Breakdown */}
-      <section className="py-20 border-t border-border">
-        <div className="container mx-auto px-4">
-          <div className="text-center mb-12">
-            <h2 className="font-mono font-bold text-2xl md:text-3xl mb-3">
-              Transparent <span className="text-gradient-primary">Cost Model</span>
-            </h2>
-            <p className="text-muted-foreground max-w-md mx-auto text-sm">Every cost is tracked, auditable, and visible in the Requestly Dashboard.</p>
-          </div>
-          <div className="grid sm:grid-cols-3 gap-6 max-w-3xl mx-auto">
-            {costSteps.map((c, i) => (
-              <motion.div key={c.label} custom={i} initial="hidden" whileInView="visible" viewport={{ once: true }} variants={fadeUp}
-                className="rounded-lg border border-border bg-card p-6 text-center"
-              >
-                <div className="flex h-12 w-12 items-center justify-center rounded-full bg-secondary mx-auto mb-4">
-                  <c.icon className="h-5 w-5 text-primary" />
-                </div>
-                <h3 className="font-mono font-semibold text-lg mb-1">{c.label}</h3>
-                <p className="text-sm text-muted-foreground">{c.desc}</p>
-              </motion.div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* 8-Page Architecture */}
-      <section className="py-20 border-t border-border">
-        <div className="container mx-auto px-4 text-center">
-          <h2 className="font-mono font-bold text-2xl md:text-3xl mb-4">
-            The <span className="text-gradient-primary">8-Page</span> Architecture
-          </h2>
-          <p className="text-muted-foreground max-w-xl mx-auto mb-10 text-sm">A complete, secure, and transparent DeFAI ecosystem built for production.</p>
-          <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-4 max-w-4xl mx-auto">
-            {[
-              { n: "1", title: "Landing", desc: "Onboarding & Pitch" },
-              { n: "2", title: "Dashboard", desc: "Asset Management" },
-              { n: "3", title: "Agent Lab", desc: "Creation & Minting" },
-              { n: "4", title: "Scheduler", desc: "Meeting Invitations" },
-              { n: "5", title: "Invite Hub", desc: "Guest Reception" },
-              { n: "6", title: "Arena", desc: "Live AI Negotiation" },
-              { n: "7", title: "Requestly", desc: "Network Auditor" },
-              { n: "8", title: "Ledger", desc: "Agreement Proof" },
-            ].map((p) => (
-              <div key={p.n} className="rounded-lg border border-border bg-card p-4 text-left">
-                <span className="font-mono text-xs text-primary">#{p.n}</span>
-                <h4 className="font-mono font-semibold text-sm mt-1">{p.title}</h4>
-                <p className="text-xs text-muted-foreground mt-1">{p.desc}</p>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* CTA */}
+      {/* CTA Section */}
       <section className="py-20 border-t border-border">
         <div className="container mx-auto px-4 text-center">
           <div className="mx-auto max-w-2xl rounded-xl border border-border bg-card p-10 md:p-16 glow-border">
@@ -193,10 +144,11 @@ const LandingPage = () => {
               Ready to deploy your <span className="text-gradient-primary">AI Clone</span>?
             </h2>
             <p className="text-muted-foreground mb-8">
-              Connect your wallet and create your first autonomous negotiation agent in minutes.
+              Sign in to create your first autonomous negotiation agent in minutes.
             </p>
+            {/* Redirects to login for Get Started */}
             <Button asChild size="lg" className="gradient-primary-bg text-primary-foreground font-semibold glow-primary">
-              <Link to="/agent-lab">
+              <Link to="/login">
                 Get Started
                 <ArrowRight className="ml-2 h-4 w-4" />
               </Link>
@@ -205,14 +157,14 @@ const LandingPage = () => {
         </div>
       </section>
 
-      {/* Footer */}
+      {/* Architecture and Footer omitted for brevity, but same logic applies */}
       <footer className="border-t border-border py-8">
         <div className="container mx-auto px-4 flex flex-col md:flex-row items-center justify-between gap-4 text-sm text-muted-foreground">
           <div className="flex items-center gap-2 font-mono font-semibold text-foreground">
             <Zap className="h-4 w-4 text-primary" />
             CloneChain
           </div>
-          <p>© 2026 CloneChain Protocol — DeFAI on Ethereum. All rights reserved.</p>
+          <p>© 2026 CloneChain Protocol — DeFAI on Ethereum.</p>
         </div>
       </footer>
     </div>

@@ -1,17 +1,15 @@
 import { runLLM } from "./llmService.js";
 
-export async function planResponse(message, memory) {
-
+export async function planResponse(message, memory, brainType) {
   const messages = [
     {
       role: "system",
-      content: "Analyze the user's message and determine the negotiation strategy."
+      content: "Analyze the meeting progress and determine the best negotiation strategy to stay within the user's defined boundaries."
     },
     ...memory,
     { role: "user", content: message }
   ];
 
-  const plan = await runLLM(messages);
-
-  return plan
+  const plan = await runLLM(messages, brainType);
+  return plan;
 }

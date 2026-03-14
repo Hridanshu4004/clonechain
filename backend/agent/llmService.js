@@ -1,7 +1,18 @@
 import axios from "axios";
 
-export async function runLLM(messages) {
+// Assuming you'll add your Gemini logic here later
+async function runGemini(messages) {
+  // Example: return await geminiSDK.generate(messages);
+  console.log("Gemini logic would execute here.");
+  return "Gemini Response (Integration Pending)";
+}
 
+export async function runLLM(messages, brainType = "ollama") {
+  if (brainType === "gemini") {
+    return await runGemini(messages);
+  }
+
+  // Default to Ollama
   const response = await axios.post(
     "http://localhost:11434/api/chat",
     {
@@ -12,5 +23,4 @@ export async function runLLM(messages) {
   );
 
   return response.data.message.content;
-
 }
