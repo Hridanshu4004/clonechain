@@ -1,4 +1,4 @@
-import { runLLM } from "./llmService.js";
+import { runLLMWithUsage } from "./llmService.js";
 
 // Added 'goal' parameter
 export async function generateNegotiationReply(personality, plan, message, memory, brainType, goal) {
@@ -22,5 +22,5 @@ Respond naturally and briefly. Your primary focus is achieving the goal while st
     { role: "user", content: message }
   ];
 
-  return await runLLM(messages, brainType);
+  return await runLLMWithUsage(messages, brainType);
 }

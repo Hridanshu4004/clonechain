@@ -19,23 +19,25 @@ const RequestlyDashboard = () => {
   // Start with first 3 items safely
   const [requests, setRequests] = useState(() => mockRequests.slice(0, 3));
 
-  useEffect(() => {
-    let i = 3;
-    const interval = setInterval(() => {
-      if (i < mockRequests.length) {
-        // Only push if the data actually exists at that index
-        const nextReq = mockRequests[i];
-        if (nextReq) {
-          setRequests((prev) => [...prev, nextReq]);
-        }
-        i++;
-      } else {
-        clearInterval(interval);
-      }
-    }, 1500);
+  //  logic with a real fetch
+useEffect(() => {
+  const fetchLiveLogs = async () => {
+    try {
+      // Assuming you have a route to get all meeting messages/logs
+      const res = await fetch("/api/meeting/logs"); 
+      const data = await res.json();
+      setRequests(data);
+    } catch (e) {
+      console.error("Failed to fetch logs", e);
+    }
+  };
 
-    return () => clearInterval(interval);
-  }, []);
+  fetchLiveLogs();
+  const interval = setInterval(fetchLiveLogs, 5000); // Poll every 5 seconds
+  return () => clearInterval(interval);
+}, []);
+
+
 
   // SAFE CALCULATIONS: Added "r?" to prevent "undefined" crashes
   const totalTokens = requests.reduce((s, r) => s + (r?.tokens || 0), 0);

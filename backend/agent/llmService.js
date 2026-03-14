@@ -5,16 +5,16 @@ import 'dotenv/config'; // Ensures process.env.GEMINI_API_KEY is read
 // Only initialize Gemini if the API key is present
 const genAI = process.env.GEMINI_API_KEY ? new GoogleGenerativeAI(process.env.GEMINI_API_KEY) : null;
 
-async function runGemini(messages) {
+async function runGeminiWithUsage(messages) {
   if (!genAI) {
     console.warn("Gemini API key missing. Falling back to Ollama.");
-    return null; // Let runLLM handle the fallback
+    return null; // Let runLLMWithUsage handle the fallback
   }
 
   try {
     const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
     
-    // Map your roles to Gemini's specific expected roles ('user' and 'model')
+    // Map your roles to Gemini's specific roles ('user' and 'model')
     const chat = model.startChat({
       history: messages.slice(0, -1).map(m => ({
         role: m.role === "assistant" ? "model" : "user",
@@ -24,21 +24,18 @@ async function runGemini(messages) {
 
     const lastMessage = messages[messages.length - 1].content || messages[messages.length - 1].message;
     const result = await chat.sendMessage(lastMessage);
-    return result.response.text();
+
+    const text = await result.response.text();
+    const tokens = result?.usage?.totalTokens ?? result?.usage?.tokenCount ?? 0;
+
+    return { text, tokens };
   } catch (error) {
     console.error("Gemini Error:", error);
-    return "Error: Gemini neural link failed.";
+    return { text: "Error: Gemini neural link failed.", tokens: 0 };
   }
 }
 
-export async function runLLM(messages, brainType = "ollama") {
-  // If explicitly asked for Gemini AND the key exists, run it
-  if (brainType === "gemini" && genAI) {
-    const geminiResult = await runGemini(messages);
-    if (geminiResult) return geminiResult;
-  }
-
-  // Default / Fallback to Ollama
+async function runOllamaWithUsage(messages) {
   try {
     const response = await axios.post(
       "http://localhost:11434/api/chat",
@@ -52,9 +49,27 @@ export async function runLLM(messages, brainType = "ollama") {
       }
     );
 
-    return response.data.message.content;
+    const text = response.data?.message?.content || "";
+    const tokens = response.data?.usage?.total_tokens ?? response.data?.usage?.totalTokens ?? response.data?.usage?.token_count ?? 0;
+    return { text, tokens };
   } catch (error) {
     console.error("Ollama Error:", error);
-    return "I'm having trouble connecting to my local brain (Ollama). Is the service running?";
+    return { text: "I'm having trouble connecting to my local brain (Ollama). Is the service running?", tokens: 0 };
   }
+}
+
+export async function runLLMWithUsage(messages, brainType = "ollama") {
+  // If explicitly asked for Gemini AND the key exists, run it
+  if (brainType === "gemini" && genAI) {
+    const geminiResult = await runGeminiWithUsage(messages);
+    if (geminiResult) return geminiResult;
+  }
+
+  // Default / Fallback to Ollama
+  return await runOllamaWithUsage(messages);
+}
+
+export async function runLLM(messages, brainType = "ollama") {
+  const result = await runLLMWithUsage(messages, brainType);
+  return result?.text || "";
 }

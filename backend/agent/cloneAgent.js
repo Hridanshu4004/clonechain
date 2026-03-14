@@ -5,15 +5,15 @@ import { generateNegotiationReply } from "./negotiatorAgent.js";
 import { validateReply } from "./validatorAgent.js";
 import { validateResponse } from "./responseValidator.js";
 
-// Added 'goal' and 'history' to the parameters
 export async function runCloneAgent(agentData, goal, message, history = []) {
   
-  // 1. Hard Boundary Check (Lab Rules)
+  // 1. Hard Boundary Check
   const dealCheck = checkDeal(message, agentData);
   if (!dealCheck.allowed) {
     return {
       response: dealCheck.reply,
-      thought: "Offer rejected: Message violates safety or price boundaries."
+      thought: "Offer rejected: Message violates safety or price boundaries.",
+      status: "negotiating" // Keep negotiating if an offer is simply blocked
     };
   }
 
@@ -22,31 +22,41 @@ export async function runCloneAgent(agentData, goal, message, history = []) {
   const brainType = agentData.brain;
 
   // 3. Strategic Planning
-  // We pass the 'goal' so the planner knows what we're trying to achieve
   const plan = await planResponse(message, history, brainType, goal);
 
   // 4. Draft the Negotiation Reply
-  const reply = await generateNegotiationReply(
+  const { text: replyText, tokens: replyTokens = 0 } = await generateNegotiationReply(
     personality,
     plan,
     message,
     history,
     brainType,
-    goal // Added goal here as well
+    goal
   );
 
-  // 5. Self-Correction / Validation
-  const validation = await validateReply(reply, brainType);
+  // 5. Self-Correction / Validation & Status Detection
+  const validationResult = await validateReply(replyText, brainType);
   
-  let finalReply = validateResponse(reply);
+  // Parse the status and the actual text (looking for our STATUS: prefix)
+  let status = "negotiating";
+  let finalReply = replyText;
 
-  if (validation !== "VALID" && validation.length > 5) {
-    finalReply = validation;
+  if (validationResult.includes("STATUS:COMPLETED")) {
+    status = "completed";
+    finalReply = validationResult.split("|")[1]?.trim() || reply;
+  } else if (validationResult.includes("STATUS:NEGOTIATING")) {
+    status = "negotiating";
+    finalReply = validationResult.split("|")[1]?.trim() || reply;
   }
 
-  // Return both the reply and the plan so the UI reasoning panel updates
+  // Run through hard-coded AI slip filters
+  finalReply = validateResponse(finalReply);
+
+  // Return the status to the controller
   return {
     response: finalReply,
-    thought: plan 
+    thought: plan,
+    status: status,
+    tokens: replyTokens
   };
 }
