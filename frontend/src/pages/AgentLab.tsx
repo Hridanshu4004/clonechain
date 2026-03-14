@@ -10,7 +10,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { useNavigate } from "react-router-dom";
 import { toast } from "sonner";
 
-const steps = ["Identity", "Personality", "Decision Logic", "Review & Mint"];
+const steps = ["Identity", "Rules & Boundaries", "Decision Logic", "Review & Mint"];
 
 const brainOptions = [
   { id: "ollama", label: "Ollama (Local)", desc: "Free, private, runs on your machine", icon: Brain },
@@ -24,7 +24,9 @@ const AgentLab = () => {
   const [step, setStep] = useState(0);
   const [form, setForm] = useState({
     name: "",
-    systemPrompt: "",
+    lowerBoundary: "",
+    upperBoundary: "",
+    customRules: "",
     decisionLogic: "",
     iqStake: "100",
     brain: "gemini",
@@ -35,7 +37,9 @@ const AgentLab = () => {
   const handleSubmit = async () => {
     if (!isConnected) return toast.error("Connect your wallet first");
     try {
-      const result = await mintAgent(form.name, form.systemPrompt);
+      // For now, we combine the boundaries and rules into a system prompt for the contract
+      const combinedRules = `Lower Boundary: ${form.lowerBoundary}\nUpper Boundary: ${form.upperBoundary}\nCustom Rules: ${form.customRules}`;
+      const result = await mintAgent(form.name, combinedRules);
       toast.success(`Agent minted as IQ AI Token! TX: ${result.txHash.slice(0, 10)}...`);
       navigate("/dashboard");
     } catch {
@@ -62,7 +66,7 @@ const AgentLab = () => {
           <FlaskConical className="h-6 w-6 text-primary" />
           <h1 className="font-mono font-bold text-2xl md:text-3xl">Agent Lab</h1>
         </div>
-        <p className="text-muted-foreground text-sm mb-8">Define personality → Mint as IQ AI Token → Record on Ethereum/Base.</p>
+        <p className="text-muted-foreground text-sm mb-8">Define boundaries → Mint as IQ AI Token → Record on Ethereum/Base.</p>
 
         {/* Step indicator */}
         <div className="flex items-center gap-2 mb-10">
@@ -114,10 +118,37 @@ const AgentLab = () => {
 
             {step === 1 && (
               <motion.div key="s1" initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -20 }}>
-                <Label className="text-sm font-medium mb-2 block">System Prompt (Personality)</Label>
-                <Textarea value={form.systemPrompt} onChange={(e) => update("systemPrompt", e.target.value)}
-                  placeholder="You are an aggressive deal-closer who maximizes value..." rows={6} className="font-mono mb-2" />
-                <p className="text-xs text-muted-foreground">This defines how your agent behaves during negotiations.</p>
+                <div className="space-y-4">
+                  <div>
+                    <Label className="text-sm font-medium mb-2 block text-red-400">Lower Boundary</Label>
+                    <Input 
+                      value={form.lowerBoundary} 
+                      onChange={(e) => update("lowerBoundary", e.target.value)}
+                      placeholder="e.g., Min price: 500 IQ, No deals on weekends" 
+                      className="font-mono" 
+                    />
+                  </div>
+                  <div>
+                    <Label className="text-sm font-medium mb-2 block text-green-400">Upper Boundary</Label>
+                    <Input 
+                      value={form.upperBoundary} 
+                      onChange={(e) => update("upperBoundary", e.target.value)}
+                      placeholder="e.g., Max price: 5000 IQ, Max 3 iterations" 
+                      className="font-mono" 
+                    />
+                  </div>
+                  <div>
+                    <Label className="text-sm font-medium mb-2 block">Custom Rules & Boundaries</Label>
+                    <Textarea 
+                      value={form.customRules} 
+                      onChange={(e) => update("customRules", e.target.value)}
+                      placeholder="Define specific constraints like 'Never share internal costs' or 'Always verify counterparty IQ stake'..." 
+                      rows={4} 
+                      className="font-mono mb-2" 
+                    />
+                  </div>
+                </div>
+                <p className="text-xs text-muted-foreground mt-4">These boundaries define the operational limits of your agent.</p>
               </motion.div>
             )}
 
@@ -147,8 +178,15 @@ const AgentLab = () => {
                     <p className="font-mono font-medium">{form.brain === "ollama" ? "Ollama (Local)" : "Gemini (Cloud)"}</p>
                   </div>
                   <div className="rounded-md bg-secondary p-4">
-                    <p className="text-xs text-muted-foreground mb-1">Personality</p>
-                    <p className="text-sm">{form.systemPrompt || "—"}</p>
+                    <p className="text-xs text-muted-foreground mb-1">Boundaries</p>
+                    <div className="text-sm font-mono space-y-1">
+                      <p className="text-red-400">Min: {form.lowerBoundary || "—"}</p>
+                      <p className="text-green-400">Max: {form.upperBoundary || "—"}</p>
+                    </div>
+                  </div>
+                  <div className="rounded-md bg-secondary p-4">
+                    <p className="text-xs text-muted-foreground mb-1">Custom Rules</p>
+                    <p className="text-sm">{form.customRules || "—"}</p>
                   </div>
                   <div className="rounded-md bg-secondary p-4">
                     <p className="text-xs text-muted-foreground mb-1">Decision Logic</p>

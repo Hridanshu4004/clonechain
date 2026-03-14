@@ -8,7 +8,7 @@ const features = [
   {
     icon: Bot,
     title: "AI Clone Agents",
-    description: "Create autonomous AI agents with custom personality and decision logic, minted as IQ AI Tokens on-chain.",
+    description: "Create autonomous AI agents with custom rules and boundaries, minted as IQ AI Tokens on-chain.",
   },
   {
     icon: Brain,
