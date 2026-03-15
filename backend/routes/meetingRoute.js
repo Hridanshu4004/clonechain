@@ -26,13 +26,16 @@ router.get('/room/:roomId', async (req, res) => {
   }
 });
 
-// GET recent logs for dashboard
+
 router.get('/logs', async (req, res) => {
   try {
-    const logs = await Log.find().sort({ timestamp: -1 }).limit(20); // Last 20 logs
+    
+    const logs = await Log.find().sort({ timestamp: -1 }).limit(100); 
+
     res.json(logs);
   } catch (error) {
-    res.status(500).json({ error: error.message });
+    console.error("Audit Log Fetch Error:", error);
+    res.status(500).json({ error: "Failed to fetch audit logs" });
   }
 });
 
